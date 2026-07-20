@@ -8,11 +8,16 @@ export default function SourceChunks({ sources }) {
       <h3 className='font-semibold text-sm text-slate-700'>Sources</h3>
       {sources.map((source, i) => (
         <div key={i} className='border border-slate-200 rounded-md p-3 bg-slate-50'>
-          <div className='flex items-center justify-between text-xs text-slate-500 mb-1'>
-            <span className='font-medium text-slate-700'>{source.label}</span>
-            <span>Page {source.page} · score {source.score}</span>
+          <div className='flex items-center justify-between text-xs text-slate-500 mb-2'>
+            <span className='inline-flex items-center gap-1.5 font-medium text-slate-700'>
+              <span className='inline-block bg-slate-200 text-slate-700 rounded px-1.5 py-0.5 text-[10px] font-semibold'>
+                {i + 1}
+              </span>
+              Page {source.page}
+            </span>
+            <span className='text-slate-400'>relevance {source.score}</span>
           </div>
-          <p className='text-sm text-slate-600 whitespace-pre-wrap'>{source.text}</p>
+          <p className='text-sm text-slate-600 whitespace-pre-wrap leading-relaxed'>{source.text}</p>
         </div>
       ))}
     </div>

@@ -47,6 +47,7 @@ async def upload_pdf(
 
     return {
         'document_id': record.data[0]['id'],
+        'filename': file.filename,
         'collection_name': result['collection_name'],
         'chunk_count': result['chunk_count'],
         'page_count': result['page_count']

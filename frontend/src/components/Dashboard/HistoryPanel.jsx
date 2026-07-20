@@ -2,6 +2,7 @@
 // Past queries — loaded from the backend /history endpoint on mount
 import { useState, useEffect } from 'react'
 import api from '../../lib/apiClient'
+import { stripMarkdown } from './FormattedAnswer'
 
 export default function HistoryPanel() {
   const [logs, setLogs] = useState([])
@@ -28,7 +29,7 @@ export default function HistoryPanel() {
             {log.user_documents?.filename ?? 'Unknown document'} · {new Date(log.created_at).toLocaleString()}
           </p>
           <p className='text-sm font-medium mt-1'>{log.question}</p>
-          <p className='text-sm text-slate-600 mt-1 line-clamp-2'>{log.answer}</p>
+          <p className='text-sm text-slate-600 mt-1 line-clamp-2'>{stripMarkdown(log.answer)}</p>
         </div>
       ))}
     </div>

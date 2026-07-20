@@ -5,6 +5,7 @@ import api from '../../lib/apiClient'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import SourceChunks from './SourceChunks'
+import FormattedAnswer from './FormattedAnswer'
 
 export default function QueryPanel({ document }) {
   const [question, setQuestion] = useState('')
@@ -57,9 +58,14 @@ export default function QueryPanel({ document }) {
         </Button>
       </form>
       {error && <p className='text-red-500 text-sm'>{error}</p>}
-      {answer && (
-        <div className='bg-slate-50 border border-slate-200 rounded-md p-4'>
-          <p className='text-sm whitespace-pre-wrap'>{answer}</p>
+      {loading && (
+        <div className='bg-slate-50 border border-slate-200 rounded-md p-4 text-sm text-slate-400'>
+          Thinking...
+        </div>
+      )}
+      {answer && !loading && (
+        <div className='bg-slate-50 border border-slate-200 rounded-md p-4 text-sm text-slate-800'>
+          <FormattedAnswer text={answer} />
         </div>
       )}
       <SourceChunks sources={sources} />
