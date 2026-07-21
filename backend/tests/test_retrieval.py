@@ -75,6 +75,14 @@ def test_boolean_chunk_index_is_not_used_for_neighbor_lookup():
     assert store.get_calls == 0
 
 
+def test_negative_chunk_index_is_not_used_for_neighbor_lookup():
+    hit = FakeDocument("anchor", {"chunk_index": -1, "page": 0})
+    store = FakeVectorStore([])
+
+    assert expand_with_neighbors(store, [(hit, 0.4)]) == [(hit, 0.4)]
+    assert store.get_calls == 0
+
+
 def test_page_numbers_are_one_based_and_unknown_is_preserved():
     assert one_based_page({"page": 0}) == 1
     assert one_based_page({"page": 23}) == 24

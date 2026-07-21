@@ -13,7 +13,11 @@ def _chunk_index(document) -> int | None:
         return None
 
     chunk_index = metadata.get("chunk_index")
-    return chunk_index if isinstance(chunk_index, int) and not isinstance(chunk_index, bool) else None
+    return (
+        chunk_index
+        if isinstance(chunk_index, int) and not isinstance(chunk_index, bool) and chunk_index >= 0
+        else None
+    )
 
 
 def expand_with_neighbors(vectorstore, semantic_hits) -> list[tuple[object, float | None]]:
