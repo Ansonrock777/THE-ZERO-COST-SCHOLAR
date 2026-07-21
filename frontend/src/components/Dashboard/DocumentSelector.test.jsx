@@ -24,4 +24,22 @@ describe('DocumentSelector', () => {
 
     expect(onChange).toHaveBeenCalledWith('doc-2')
   })
+
+  it('announces when saved documents are loading', () => {
+    render(<DocumentSelector documents={[]} selectedId='' onChange={vi.fn()} loading error='' />)
+
+    expect(screen.getByRole('status')).toHaveTextContent('Loading documents...')
+  })
+
+  it('alerts the user when saved documents cannot load', () => {
+    render(<DocumentSelector documents={[]} selectedId='' onChange={vi.fn()} loading={false} error='Unable to load documents.' />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Unable to load documents.')
+  })
+
+  it('directs the user to upload when there are no saved documents', () => {
+    render(<DocumentSelector documents={[]} selectedId='' onChange={vi.fn()} loading={false} error='' />)
+
+    expect(screen.getByText('No uploaded documents yet.')).toBeInTheDocument()
+  })
 })

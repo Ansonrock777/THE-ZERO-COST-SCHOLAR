@@ -32,8 +32,13 @@ export default function Dashboard() {
           ...document,
           document_id: document.id,
         }))
-        setDocuments(savedDocuments)
-        setSelectedId(savedDocuments[0]?.document_id ?? '')
+        setDocuments(currentDocuments => [
+          ...currentDocuments,
+          ...savedDocuments.filter(savedDocument => (
+            !currentDocuments.some(document => document.document_id === savedDocument.document_id)
+          )),
+        ])
+        setSelectedId(currentSelectedId => currentSelectedId || savedDocuments[0]?.document_id || '')
       } catch {
         if (active) {
           setDocumentsError('Unable to load saved documents. Please refresh the page.')
