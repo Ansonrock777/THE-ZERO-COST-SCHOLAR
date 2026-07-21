@@ -47,6 +47,18 @@ def test_expands_each_semantic_hit_with_ordered_neighbors_and_deduplicates():
     assert store.requested_indexes == [1, 2, 3, 4]
 
 
+def test_chunk_zero_does_not_request_or_emit_a_negative_neighbor():
+    hits = [(doc(0, "zero", page=0), 0.2)]
+    store = FakeVectorStore([doc(0, "zero", 0), doc(1, "one", 0)])
+
+    expanded = expand_with_neighbors(store, hits)
+
+    assert store.requested_indexes == [0, 1]
+    assert [(item.metadata["chunk_index"], score) for item, score in expanded] == [
+        (0, 0.2), (1, None)
+    ]
+
+
 def test_missing_chunk_index_keeps_semantic_hit_without_get():
     hit = FakeDocument("anchor", {"page": 0})
     store = FakeVectorStore([])

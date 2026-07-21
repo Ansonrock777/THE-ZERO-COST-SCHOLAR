@@ -14,8 +14,10 @@ from document_repository import OwnedDocument
 class FakeRepository:
     def __init__(self, document):
         self.document = document
+        self.get_owned_document_calls = []
 
     def get_owned_document(self, document_id, user_id):
+        self.get_owned_document_calls.append((document_id, user_id))
         return self.document
 
 
@@ -59,7 +61,8 @@ def app_module(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_foreign_document_is_rejected_before_query_or_logging(app_module):
-    app_module.document_repository = FakeRepository(document=None)
+    repository = FakeRepository(document=None)
+    app_module.document_repository = repository
     app_module.query_document = Mock()
     app_module.supabase = FakeLoggingClient()
 
@@ -71,15 +74,17 @@ async def test_foreign_document_is_rejected_before_query_or_logging(app_module):
 
     assert error.value.status_code == 404
     assert error.value.detail == "Document not found"
+    assert repository.get_owned_document_calls == [("foreign", "attacker")]
     app_module.query_document.assert_not_called()
     assert app_module.supabase.inserted == []
 
 
 @pytest.mark.asyncio
 async def test_owner_query_uses_server_collection_and_logs(app_module):
-    app_module.document_repository = FakeRepository(
+    repository = FakeRepository(
         document=OwnedDocument("doc-1", "guide.pdf", "stored-collection")
     )
+    app_module.document_repository = repository
     app_module.query_document = Mock(return_value={
         "answer": "answer", "sources": [], "model": "configured-model"
     })
@@ -91,6 +96,7 @@ async def test_owner_query_uses_server_collection_and_logs(app_module):
     )
 
     app_module.query_document.assert_called_once_with("question", "stored-collection")
+    assert repository.get_owned_document_calls == [("doc-1", "owner")]
     assert app_module.supabase.inserted[0]["document_id"] == "doc-1"
 
 

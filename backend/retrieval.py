@@ -36,6 +36,7 @@ def expand_with_neighbors(vectorstore, semantic_hits) -> list[tuple[object, floa
         neighbor_index
         for _, _, chunk_index in anchors
         for neighbor_index in (chunk_index - 1, chunk_index, chunk_index + 1)
+        if neighbor_index >= 0
     })
     stored = vectorstore.get(
         where={"chunk_index": {"$in": requested_indexes}},
@@ -58,6 +59,8 @@ def expand_with_neighbors(vectorstore, semantic_hits) -> list[tuple[object, floa
             continue
 
         for neighbor_index in (chunk_index - 1, chunk_index, chunk_index + 1):
+            if neighbor_index < 0:
+                continue
             if neighbor_index in seen_indexes:
                 continue
 

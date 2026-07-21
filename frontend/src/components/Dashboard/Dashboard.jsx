@@ -84,7 +84,7 @@ export default function Dashboard() {
           loading={loadingDocuments}
           error={documentsError}
         />
-        <QueryPanel document={currentDocument} />
+        <QueryPanel key={currentDocument?.document_id} document={currentDocument} />
         <HistoryPanel />
       </main>
     </div>
