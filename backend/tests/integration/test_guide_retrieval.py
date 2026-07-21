@@ -1,7 +1,6 @@
 import os
 import math
 import re
-import sys
 from collections import Counter
 from pathlib import Path
 
@@ -9,8 +8,6 @@ import pytest
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
-sys.path.insert(0, str(Path(__file__).parents[2]))
 
 from retrieval import expand_with_neighbors
 
