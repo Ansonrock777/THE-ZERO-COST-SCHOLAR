@@ -13,4 +13,12 @@ describe('FormattedAnswer citations', () => {
   it('strips a non-breaking-space source marker from previews', () => {
     expect(stripMarkdown('Answer [Source\u00a02]')).toBe('Answer')
   })
+
+  it('preserves bracketed citations as badges and strips them from previews', () => {
+    render(<FormattedAnswer text='Answer 【3】' />)
+
+    expect(screen.getByText('3', { selector: 'sup' })).toBeInTheDocument()
+    expect(document.body).not.toHaveTextContent('【3】')
+    expect(stripMarkdown('Answer 【3】')).toBe('Answer')
+  })
 })
