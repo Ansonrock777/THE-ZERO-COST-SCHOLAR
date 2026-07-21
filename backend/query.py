@@ -3,6 +3,7 @@ import os
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from openai import OpenAI  # OpenRouter uses the OpenAI SDK format
+from retrieval import expand_with_neighbors, serialize_sources
 
 embeddings = HuggingFaceEmbeddings(model_name=os.getenv('EMBEDDING_MODEL'))
 CHROMA_DB_PATH = os.getenv('CHROMA_DB_PATH', './chroma_store')
@@ -33,20 +34,12 @@ def query_document(question: str, collection_name: str) -> dict:
         embedding_function=embeddings,
         collection_name=collection_name
     )
-    results = vectorstore.similarity_search_with_score(question, k=TOP_K)
+    semantic_results = vectorstore.similarity_search_with_score(question, k=TOP_K)
+    results = expand_with_neighbors(vectorstore, semantic_results)
+    sources = serialize_sources(results)
 
     # Build the context string with source labels
-    context_parts = []
-    sources = []
-    for i, (doc, score) in enumerate(results):
-        label = f'[Source {i+1}]'
-        context_parts.append(f'{label}\n{doc.page_content}')
-        sources.append({
-            'label': label,
-            'text': doc.page_content,
-            'page': doc.metadata.get('page', '?'),
-            'score': round(float(score), 4)
-        })
+    context_parts = [f"{source['label']}\n{source['text']}" for source in sources]
 
     context = '\n\n---\n\n'.join(context_parts)
 
