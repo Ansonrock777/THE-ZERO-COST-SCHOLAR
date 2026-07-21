@@ -2,7 +2,7 @@
 // Renders the LLM's answer: bold, bullet/numbered lists, and inline
 // [Source N] / 【N】 citation markers as small badges — without a markdown dependency.
 
-const CITATION_RE = /\[Source (\d+)\]|【(\d+)】/g
+const CITATION_RE = /\[Source\s+(\d+)\]|【(\d+)】/gu
 
 function renderInline(text, keyPrefix) {
   // Split on **bold** first, then run citation matching on the plain segments.
