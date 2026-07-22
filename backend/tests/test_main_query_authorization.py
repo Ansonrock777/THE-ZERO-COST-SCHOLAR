@@ -33,6 +33,28 @@ class FakeRepository:
         return self.document is not None
 
 
+class FakeConversationRepository:
+    def __init__(self, conversation=None, messages=None):
+        self.conversation = conversation
+        self.messages = messages or []
+        self.recent_calls = []
+        self.added = []
+
+    def get_owned_conversation(self, conversation_id, user_id):
+        return self.conversation
+
+    def recent_messages(self, conversation_id, user_id, limit=6):
+        self.recent_calls.append((conversation_id, user_id, limit))
+        return self.messages
+
+    def add_message(self, conversation_id, user_id, role, content, sources=None, trace_id=None):
+        self.added.append((conversation_id, user_id, role, content, sources or [], trace_id))
+        return {"id": f"message-{len(self.added)}"}
+
+    def update_conversation(self, *args, **kwargs):
+        return True
+
+
 class FakeLoggingClient:
     def __init__(self):
         self.inserted = []
@@ -186,6 +208,14 @@ def test_query_request_normalizes_multiple_documents(app_module):
     assert request.selected_document_ids == ["a", "b"]
 
 
+def test_query_request_accepts_conversation_id(app_module):
+    request = app_module.QueryRequest(
+        question="follow up", document_ids=["a"], conversation_id="conversation-1"
+    )
+
+    assert request.conversation_id == "conversation-1"
+
+
 @pytest.mark.parametrize("values", [[], ["a", "a"], [str(i) for i in range(11)]])
 def test_query_request_rejects_invalid_document_lists(app_module, values):
     with pytest.raises(ValidationError):
@@ -231,3 +261,61 @@ async def test_upload_rejects_files_over_configured_limit_before_storage(app_mod
 
     assert error.value.status_code == 413
     app_module.pdf_storage.save.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_foreign_conversation_is_rejected_before_generation(app_module):
+    owned = [OwnedDocument("doc-1", "one.pdf", "collection-one")]
+    app_module.document_repository = FakeRepository(document=owned)
+    app_module.conversation_repository = FakeConversationRepository(conversation=None)
+    app_module.query_document = Mock()
+
+    with pytest.raises(HTTPException) as error:
+        await app_module.ask_question(
+            app_module.QueryRequest(
+                question="follow up",
+                document_ids=["doc-1"],
+                conversation_id="foreign",
+            ),
+            user_id="owner",
+        )
+
+    assert error.value.status_code == 404
+    app_module.query_document.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_follow_up_uses_bounded_context_and_persists_exchange(app_module):
+    owned = [OwnedDocument("doc-1", "one.pdf", "collection-one")]
+    conversation_messages = [
+        {"role": "user", "content": "earlier"},
+        {"role": "assistant", "content": "earlier answer"},
+    ]
+    conversations = FakeConversationRepository(
+        conversation={"id": "conversation-1", "document_ids": ["doc-1"]},
+        messages=conversation_messages,
+    )
+    app_module.document_repository = FakeRepository(document=owned)
+    app_module.conversation_repository = conversations
+    app_module.query_document = Mock(return_value={
+        "answer": "follow-up answer",
+        "sources": [{"page": 1}],
+        "model": "free-model",
+        "trace_id": "trace-1",
+    })
+    app_module.supabase = FakeLoggingClient()
+
+    await app_module.ask_question(
+        app_module.QueryRequest(
+            question="follow up",
+            document_ids=["doc-1"],
+            conversation_id="conversation-1",
+        ),
+        user_id="owner",
+    )
+
+    app_module.query_document.assert_called_once_with(
+        "follow up", owned, conversation=conversation_messages, user_id="owner"
+    )
+    assert conversations.recent_calls == [("conversation-1", "owner", 6)]
+    assert [item[2] for item in conversations.added] == ["user", "assistant"]
