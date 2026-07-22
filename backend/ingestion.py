@@ -6,9 +6,15 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
+from bm25 import (
+    build_bm25_index_from_chunks,
+    index_path_for_collection,
+    save_bm25_index,
+)
 
 EMBEDDING_MODEL = os.getenv('EMBEDDING_MODEL', 'sentence-transformers/all-MiniLM-L6-v2')
 CHROMA_DB_PATH = os.getenv('CHROMA_DB_PATH', './chroma_store')
+BM25_INDEX_PATH = os.getenv('BM25_INDEX_PATH', './bm25_store')
 CHUNK_SIZE = int(os.getenv('CHUNK_SIZE', 500))
 CHUNK_OVERLAP = int(os.getenv('CHUNK_OVERLAP', 50))
 
@@ -58,11 +64,17 @@ def ingest_pdf(file_bytes: bytes, filename: str, user_id: str) -> dict:
             persist_directory=CHROMA_DB_PATH,
             collection_name=collection_name
         )
+        bm25_path = index_path_for_collection(collection_name, BM25_INDEX_PATH)
+        save_bm25_index(
+            build_bm25_index_from_chunks(collection_name, chunks),
+            bm25_path,
+        )
 
         return {
             'collection_name': collection_name,
             'chunk_count': len(chunks),
-            'page_count': len(pages)
+            'page_count': len(pages),
+            'bm25_index': bm25_path.name,
         }
     finally:
         os.unlink(tmp_path)  # Always clean up the temp file
