@@ -170,6 +170,7 @@ def query_document(
     *,
     user_id: str = "anonymous",
     dependencies: QueryDependencies | None = None,
+    answer_style: str = "balanced",
 ) -> dict:
     if not documents:
         raise ValueError("At least one owned document is required")
@@ -224,6 +225,7 @@ def query_document(
                 context,
                 list(conversation),
                 max_conversation_messages=policy.max_conversation_messages,
+                answer_style=answer_style,
             )
             trace.add_metric(
                 "prompt_tokens",

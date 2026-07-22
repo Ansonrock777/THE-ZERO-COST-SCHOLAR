@@ -6,6 +6,7 @@ from types import ModuleType, SimpleNamespace
 from unittest.mock import Mock
 
 import pytest
+import json
 from fastapi import HTTPException
 from fastapi import UploadFile
 from pydantic import ValidationError
@@ -19,6 +20,7 @@ class FakeRepository:
         self.get_owned_document_calls = []
         self.get_owned_documents_calls = []
         self.soft_delete_calls = []
+        self.summaries = []
 
     def get_owned_document(self, document_id, user_id):
         self.get_owned_document_calls.append((document_id, user_id))
@@ -31,6 +33,10 @@ class FakeRepository:
     def soft_delete_document(self, document_id, user_id):
         self.soft_delete_calls.append((document_id, user_id))
         return self.document is not None
+
+    def save_summary(self, document_id, user_id, summary):
+        self.summaries.append((document_id, user_id, summary))
+        return True
 
 
 class FakeConversationRepository:
@@ -319,3 +325,59 @@ async def test_follow_up_uses_bounded_context_and_persists_exchange(app_module):
     )
     assert conversations.recent_calls == [("conversation-1", "owner", 6)]
     assert [item[2] for item in conversations.added] == ["user", "assistant"]
+
+
+@pytest.mark.asyncio
+async def test_stream_query_emits_statuses_then_complete_result(app_module):
+    owned = [OwnedDocument("doc-1", "one.pdf", "collection-one")]
+    app_module.document_repository = FakeRepository(document=owned)
+    app_module.conversation_repository = FakeConversationRepository()
+    app_module.query_document = Mock(return_value={
+        "answer": "grounded answer", "sources": [], "model": "free-model", "trace_id": "trace-1"
+    })
+    app_module.supabase = FakeLoggingClient()
+
+    response = await app_module.stream_question(
+        app_module.QueryRequest(question="question", document_ids=["doc-1"]),
+        user_id="stream-owner",
+    )
+    events = [json.loads(chunk) async for chunk in response.body_iterator]
+
+    assert [event["type"] for event in events] == ["status", "status", "status", "result"]
+    assert events[-1]["answer"] == "grounded answer"
+    assert events[-1]["trace_id"] == "trace-1"
+
+
+@pytest.mark.asyncio
+async def test_summary_is_normalized_to_one_paragraph_and_saved(app_module):
+    owned = OwnedDocument("doc-1", "one.pdf", "collection-one")
+    repository = FakeRepository(document=owned)
+    app_module.document_repository = repository
+    app_module.query_document = Mock(return_value={
+        "answer": "First line.\n\nSecond line.", "sources": [], "model": "free-model", "trace_id": "trace-2"
+    })
+
+    result = await app_module.summarize_document("doc-1", user_id="summary-owner")
+
+    assert result["summary"] == "First line. Second line."
+    assert repository.summaries == [("doc-1", "summary-owner", "First line. Second line.")]
+
+
+@pytest.mark.asyncio
+async def test_developer_telemetry_is_gated_and_scoped_to_owner(app_module, monkeypatch):
+    with pytest.raises(HTTPException) as error:
+        await app_module.developer_telemetry(user_id="owner")
+    assert error.value.status_code == 404
+
+    traces = [
+        {"trace_id": "owned", "user_id": "owner", "status": "completed", "document_count": 1, "metrics": {"total_ms": 12.0}},
+        {"trace_id": "foreign", "user_id": "other", "status": "completed", "document_count": 1, "metrics": {"total_ms": 999.0}},
+    ]
+    store = SimpleNamespace(recent=lambda limit: traces)
+    sys.modules["query"].default_dependencies = lambda: SimpleNamespace(telemetry_store=store)
+    monkeypatch.setenv("DEV_MODE", "true")
+
+    result = await app_module.developer_telemetry(user_id="owner")
+
+    assert [trace["trace_id"] for trace in result["traces"]] == ["owned"]
+    assert result["aggregates"]["total_ms"] == {"count": 1, "average": 12.0, "p95": 12.0}

@@ -17,6 +17,7 @@ class DocumentRepository(Protocol):
     ) -> list[OwnedDocument] | None: ...
     def list_documents(self, user_id: str) -> list[dict]: ...
     def soft_delete_document(self, document_id: str, user_id: str) -> bool: ...
+    def save_summary(self, document_id: str, user_id: str, summary: str) -> bool: ...
 
 
 class SupabaseDocumentRepository:
@@ -62,13 +63,24 @@ class SupabaseDocumentRepository:
     def list_documents(self, user_id: str) -> list[dict]:
         response = (
             self._client.table("user_documents")
-            .select("id,filename,file_size,chunk_count,created_at")
+            .select("id,filename,file_size,chunk_count,created_at,summary")
             .eq("user_id", user_id)
             .is_("deleted_at", "null")
             .order("created_at", desc=True)
             .execute()
         )
         return response.data
+
+    def save_summary(self, document_id: str, user_id: str, summary: str) -> bool:
+        response = (
+            self._client.table("user_documents")
+            .update({"summary": summary})
+            .eq("id", document_id)
+            .eq("user_id", user_id)
+            .is_("deleted_at", "null")
+            .execute()
+        )
+        return bool(response.data)
 
     def soft_delete_document(self, document_id: str, user_id: str) -> bool:
         response = (

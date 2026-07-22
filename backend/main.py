@@ -4,10 +4,14 @@ load_dotenv()  # Must run before any module-level os.getenv() in auth/ingestion/
 
 import os
 import uuid
+import asyncio
+import json
+import math
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, model_validator
+from typing import Literal
 from auth import get_current_user
 from document_repository import SupabaseDocumentRepository
 from conversation_repository import SupabaseConversationRepository
@@ -15,6 +19,7 @@ from ingestion import ingest_pdf
 from query import query_document
 from database import supabase
 from pdf_storage import LocalPdfStorage
+from rate_limit import SlidingWindowRateLimiter
 
 app = FastAPI(title='Zero-Cost Scholar API', version='2.0')
 
@@ -28,6 +33,13 @@ document_repository = SupabaseDocumentRepository(supabase)
 conversation_repository = SupabaseConversationRepository(supabase)
 pdf_storage = LocalPdfStorage(os.getenv('PDF_STORAGE_PATH', './data/pdfs'))
 MAX_PDF_BYTES = int(os.getenv('MAX_PDF_BYTES', str(50 * 1024 * 1024)))
+query_rate_limiter = SlidingWindowRateLimiter(int(os.getenv('QUERY_REQUESTS_PER_MINUTE', '30')))
+upload_rate_limiter = SlidingWindowRateLimiter(int(os.getenv('UPLOADS_PER_MINUTE', '10')))
+
+
+def enforce_rate_limit(limiter, user_id: str):
+    if not limiter.allow(user_id):
+        raise HTTPException(429, 'Rate limit exceeded. Try again shortly.')
 
 
 class QueryRequest(BaseModel):
@@ -36,6 +48,7 @@ class QueryRequest(BaseModel):
     document_id: str | None = None
     document_ids: list[str] | None = None
     conversation_id: str | None = None
+    answer_style: Literal['concise', 'balanced', 'academic'] = 'balanced'
 
     @model_validator(mode='after')
     def validate_document_selection(self):
@@ -71,6 +84,7 @@ async def upload_pdf(
     file: UploadFile = File(...),
     user_id: str = Depends(get_current_user)  # JWT verified here
 ):
+    enforce_rate_limit(upload_rate_limiter, user_id)
     if not file.filename.endswith('.pdf'):
         raise HTTPException(400, 'Only PDF files are accepted')
 
@@ -106,6 +120,7 @@ async def ask_question(
     body: QueryRequest,
     user_id: str = Depends(get_current_user)
 ):
+    enforce_rate_limit(query_rate_limiter, user_id)
     documents = document_repository.get_owned_documents(
         body.selected_document_ids, user_id
     )
@@ -122,11 +137,11 @@ async def ask_question(
         conversation = conversation_repository.recent_messages(
             body.conversation_id, user_id, limit=6
         )
+        query_options = {'user_id': user_id}
+        if body.answer_style != 'balanced':
+            query_options['answer_style'] = body.answer_style
         result = query_document(
-            body.question,
-            documents,
-            conversation=conversation,
-            user_id=user_id,
+            body.question, documents, conversation=conversation, **query_options
         )
         conversation_repository.add_message(
             body.conversation_id, user_id, 'user', body.question
@@ -145,7 +160,10 @@ async def ask_question(
             document_ids=body.selected_document_ids,
         )
     else:
-        result = query_document(body.question, documents, user_id=user_id)
+        query_options = {'user_id': user_id}
+        if body.answer_style != 'balanced':
+            query_options['answer_style'] = body.answer_style
+        result = query_document(body.question, documents, **query_options)
 
     # Save the query to history
     supabase.table('query_logs').insert({
@@ -164,6 +182,108 @@ async def ask_question(
     }).execute()
 
     return result
+
+
+@app.post('/query/stream')
+async def stream_question(
+    body: QueryRequest,
+    user_id: str = Depends(get_current_user),
+):
+    enforce_rate_limit(query_rate_limiter, user_id)
+    """Stream coarse pipeline progress, then the complete grounded answer."""
+    async def events():
+        yield json.dumps({'type': 'status', 'stage': 'validating'}) + '\n'
+        documents = document_repository.get_owned_documents(body.selected_document_ids, user_id)
+        if documents is None:
+            yield json.dumps({'type': 'error', 'detail': 'Document not found'}) + '\n'
+            return
+        conversation = []
+        if body.conversation_id:
+            owned = conversation_repository.get_owned_conversation(body.conversation_id, user_id)
+            if owned is None:
+                yield json.dumps({'type': 'error', 'detail': 'Conversation not found'}) + '\n'
+                return
+            conversation = conversation_repository.recent_messages(body.conversation_id, user_id, limit=6)
+        yield json.dumps({'type': 'status', 'stage': 'retrieving'}) + '\n'
+        yield json.dumps({'type': 'status', 'stage': 'generating'}) + '\n'
+        try:
+            query_options = {'user_id': user_id}
+            if body.answer_style != 'balanced':
+                query_options['answer_style'] = body.answer_style
+            result = await asyncio.to_thread(
+                query_document, body.question, documents,
+                conversation, **query_options,
+            )
+            if body.conversation_id:
+                conversation_repository.add_message(body.conversation_id, user_id, 'user', body.question)
+                conversation_repository.add_message(
+                    body.conversation_id, user_id, 'assistant', result['answer'],
+                    result['sources'], result.get('trace_id'),
+                )
+                conversation_repository.update_conversation(
+                    body.conversation_id, user_id, document_ids=body.selected_document_ids,
+                )
+            supabase.table('query_logs').insert({
+                'user_id': user_id,
+                'document_id': body.selected_document_ids[0],
+                'question': body.question,
+                'answer': result['answer'],
+                'sources': result['sources'],
+                'model_used': result['model'],
+                'document_ids': body.selected_document_ids,
+                'document_snapshot': [
+                    {'id': document.id, 'filename': document.filename}
+                    for document in documents
+                ],
+                'trace_id': result.get('trace_id'),
+            }).execute()
+            yield json.dumps({'type': 'result', **result}) + '\n'
+        except Exception as error:
+            yield json.dumps({'type': 'error', 'detail': type(error).__name__}) + '\n'
+
+    return StreamingResponse(events(), media_type='application/x-ndjson')
+
+
+@app.post('/documents/{document_id}/summary')
+async def summarize_document(
+    document_id: str,
+    user_id: str = Depends(get_current_user),
+):
+    enforce_rate_limit(query_rate_limiter, user_id)
+    document = document_repository.get_owned_document(document_id, user_id)
+    if document is None:
+        raise HTTPException(404, 'Document not found')
+    result = await asyncio.to_thread(
+        query_document,
+        'Summarize this document in one concise paragraph, covering its purpose, main ideas, and conclusion.',
+        [document],
+        user_id=user_id,
+    )
+    summary = ' '.join(result['answer'].split())
+    document_repository.save_summary(document_id, user_id, summary)
+    return {'document_id': document_id, 'summary': summary, 'trace_id': result.get('trace_id')}
+
+
+@app.get('/developer/telemetry')
+async def developer_telemetry(user_id: str = Depends(get_current_user)):
+    if os.getenv('DEV_MODE', '').lower() not in {'1', 'true', 'yes'}:
+        raise HTTPException(404, 'Not found')
+    store = __import__('query').default_dependencies().telemetry_store
+    traces = [trace for trace in store.recent(limit=100) if trace['user_id'] == user_id]
+    metric_names = sorted({name for trace in traces for name in trace['metrics']})
+    aggregates = {}
+    for name in metric_names:
+        values = sorted(float(trace['metrics'][name]) for trace in traces if name in trace['metrics'])
+        index = max(0, math.ceil(len(values) * .95) - 1)
+        aggregates[name] = {
+            'count': len(values),
+            'average': sum(values) / len(values),
+            'p95': values[index],
+        }
+    return {
+        'traces': traces,
+        'aggregates': aggregates,
+    }
 
 
 @app.get('/documents')

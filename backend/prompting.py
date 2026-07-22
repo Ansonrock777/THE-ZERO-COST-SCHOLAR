@@ -95,6 +95,7 @@ def build_messages(
     conversation: list[dict],
     *,
     max_conversation_messages: int = 6,
+    answer_style: str = "balanced",
 ) -> list[dict[str, str]]:
     evidence_parts = []
     for index, source in enumerate(context, start=1):
@@ -117,5 +118,5 @@ def build_messages(
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": evidence_message},
         *recent,
-        {"role": "user", "content": f"Question:\n{question}"},
+        {"role": "user", "content": f"Answer style: {answer_style}.\nQuestion:\n{question}"},
     ]

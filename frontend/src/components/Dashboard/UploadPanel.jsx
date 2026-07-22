@@ -24,13 +24,10 @@ export default function UploadPanel({ onUploadComplete }) {
       const { data } = await api.post('/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
-      setProgress(90); setStatus('Embedding vectors...')
-      setTimeout(() => {
-        setProgress(100)
-        setStatus(`Done! ${data.chunk_count} chunks indexed.`)
-        setUploading(false)
-        onUploadComplete(data)  // Pass document info to parent
-      }, 800)
+      setProgress(100)
+      setStatus(`Done! ${data.chunk_count} chunks indexed.`)
+      setUploading(false)
+      onUploadComplete(data)
     } catch (err) {
       setStatus('Upload failed: ' + err.response?.data?.detail)
       setUploading(false)
