@@ -23,6 +23,14 @@ class FakeQueryBuilder:
         self.calls.append(("in", column, values))
         return self
 
+    def is_(self, column, value):
+        self.calls.append(("is", column, value))
+        return self
+
+    def update(self, values):
+        self.calls.append(("update", values))
+        return self
+
     def limit(self, count):
         self.calls.append(("limit", count))
         return self
@@ -57,6 +65,7 @@ def test_get_owned_document_filters_by_document_and_user():
     assert ("eq", "id", "doc-1") in client.builder.calls
     assert ("eq", "user_id", "user-1") in client.builder.calls
     assert ("limit", 1) in client.builder.calls
+    assert ("is", "deleted_at", "null") in client.builder.calls
 
 
 def test_get_owned_document_returns_none_for_no_match():
@@ -95,3 +104,13 @@ def test_get_owned_documents_returns_none_when_any_document_is_missing():
     repository = SupabaseDocumentRepository(client)
 
     assert repository.get_owned_documents(["doc-a", "foreign"], "user-1") is None
+
+
+def test_soft_delete_filters_by_owner_and_document():
+    client = FakeClient(data=[{"id": "doc-a"}])
+    repository = SupabaseDocumentRepository(client)
+
+    assert repository.soft_delete_document("doc-a", "user-1") is True
+    assert any(call[0] == "update" and "deleted_at" in call[1] for call in client.builder.calls)
+    assert ("eq", "id", "doc-a") in client.builder.calls
+    assert ("eq", "user_id", "user-1") in client.builder.calls

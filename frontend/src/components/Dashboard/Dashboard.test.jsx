@@ -1,158 +1,38 @@
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import api from '../../lib/apiClient'
 import Dashboard from './Dashboard'
 
-vi.mock('../../lib/apiClient', () => ({
-  default: { get: vi.fn(), post: vi.fn() },
-}))
+vi.mock('../../lib/apiClient', () => ({ default: { get: vi.fn(), post: vi.fn(), patch: vi.fn(), delete: vi.fn() } }))
+vi.mock('./PdfViewer', () => ({ default: ({ document }) => <div>PDF: {document?.filename || 'none'}</div> }))
+vi.mock('./ChatPane', () => ({ default: ({ documentIds, summary }) => <div>Chat with {documentIds.join(',')} {summary}</div> }))
+vi.mock('./UploadPanel', () => ({ default: () => <button>Upload PDF</button> }))
 
-vi.mock('../../hooks/useAuth', () => ({
-  useAuth: () => ({ user: { email: 'student@example.com' } }),
-}))
-
-vi.mock('../../lib/supabaseClient', () => ({
-  supabase: { auth: { signOut: vi.fn() } },
-}))
-
-vi.mock('./UploadPanel', () => ({
-  default: ({ onUploadComplete }) => (
-    <button
-      type='button'
-      onClick={() => onUploadComplete({
-        document_id: 'doc-3',
-        filename: 'just-uploaded.pdf',
-        chunk_count: 4,
-        page_count: 2,
-      })}
-    >
-      Complete upload
-    </button>
-  ),
-}))
-
-afterEach(() => {
-  cleanup()
-  vi.clearAllMocks()
+beforeEach(() => {
+  localStorage.clear()
+  api.get.mockImplementation(path => {
+    if (path === '/documents') return Promise.resolve({ data: [{ id: 'doc-a', filename: 'archive.pdf', summary: 'A useful overview.' }, { id: 'doc-b', filename: 'handbook.pdf' }] })
+    if (path === '/conversations') return Promise.resolve({ data: [{ id: 'chat-a', title: 'Prior inquiry', document_ids: ['doc-b'], pinned: false }] })
+    if (path === '/conversations/chat-a/messages') return Promise.resolve({ data: [{ role: 'assistant', content: 'Saved answer' }] })
+    return Promise.reject(new Error(path))
+  })
 })
 
-describe('Dashboard', () => {
-  it('selects the newest saved document and selects a completed upload', async () => {
-    api.get.mockImplementation(path => {
-      if (path === '/documents') {
-        return Promise.resolve({
-          data: [
-            { id: 'doc-2', filename: 'newest.pdf' },
-            { id: 'doc-1', filename: 'older.pdf' },
-          ],
-        })
-      }
-      if (path === '/history') return Promise.resolve({ data: [] })
-      return Promise.reject(new Error(`Unexpected API path: ${path}`))
-    })
+afterEach(() => { cleanup(); vi.clearAllMocks() })
 
+describe('Dashboard production workspace', () => {
+  it('loads the library, permits multi-document selection, and shows the summary', async () => {
     render(<Dashboard />)
-
-    const selector = await screen.findByLabelText('Document')
-    expect(selector).toHaveValue('doc-2')
-    expect(api.get).toHaveBeenCalledWith('/documents')
-
-    fireEvent.click(screen.getByRole('button', { name: 'Complete upload' }))
-
-    await waitFor(() => expect(selector).toHaveValue('doc-3'))
-    expect(screen.getByRole('option', { name: 'just-uploaded.pdf' })).toBeInTheDocument()
+    expect(await screen.findByText(/chat with doc-a/i)).toHaveTextContent('A useful overview.')
+    fireEvent.click(screen.getByRole('checkbox', { name: 'handbook.pdf' }))
+    expect(screen.getByText(/chat with doc-a,doc-b/i)).toBeInTheDocument()
+    expect(screen.getByText('PDF: archive.pdf')).toBeInTheDocument()
   })
 
-  it('keeps a completed upload selected when the initial document request resolves late', async () => {
-    let resolveDocuments
-    const documentsRequest = new Promise(resolve => { resolveDocuments = resolve })
-
-    api.get.mockImplementation(path => {
-      if (path === '/documents') return documentsRequest
-      if (path === '/history') return Promise.resolve({ data: [] })
-      return Promise.reject(new Error(`Unexpected API path: ${path}`))
-    })
-
+  it('restores a selected conversation and its documents', async () => {
     render(<Dashboard />)
-
-    fireEvent.click(screen.getByRole('button', { name: 'Complete upload' }))
-    resolveDocuments({ data: [{ id: 'doc-2', filename: 'saved-before-upload.pdf' }] })
-
-    const selector = await screen.findByLabelText('Document')
-    expect(selector).toHaveValue('doc-3')
-    expect(screen.getByRole('option', { name: 'just-uploaded.pdf' })).toBeInTheDocument()
-  })
-
-  it('clears a completed answer and its sources when switching documents', async () => {
-    api.get.mockImplementation(path => {
-      if (path === '/documents') {
-        return Promise.resolve({ data: [
-          { id: 'doc-a', filename: 'alpha.pdf' },
-          { id: 'doc-b', filename: 'bravo.pdf' },
-        ] })
-      }
-      if (path === '/history') return Promise.resolve({ data: [] })
-      return Promise.reject(new Error(`Unexpected API path: ${path}`))
-    })
-    api.post.mockResolvedValue({ data: {
-      answer: 'Answer from alpha',
-      sources: [{ page: 1, score: 0.1, text: 'Alpha source excerpt' }],
-    } })
-
-    render(<Dashboard />)
-
-    const selector = await screen.findByLabelText('Document')
-    fireEvent.change(screen.getByPlaceholderText('What does this document say about...?'), {
-      target: { value: 'Question about alpha' },
-    })
-    fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
-
-    await screen.findByText('Answer from alpha')
-    expect(screen.getByText('Alpha source excerpt')).toBeInTheDocument()
-
-    fireEvent.change(selector, { target: { value: 'doc-b' } })
-
-    expect(screen.getByText('Document: bravo.pdf')).toBeInTheDocument()
-    expect(screen.queryByText('Answer from alpha')).not.toBeInTheDocument()
-    expect(screen.queryByText('Alpha source excerpt')).not.toBeInTheDocument()
-  })
-
-  it('does not show a late answer from the previously selected document', async () => {
-    let resolveQuery
-    const queryRequest = new Promise(resolve => { resolveQuery = resolve })
-
-    api.get.mockImplementation(path => {
-      if (path === '/documents') {
-        return Promise.resolve({ data: [
-          { id: 'doc-a', filename: 'alpha.pdf' },
-          { id: 'doc-b', filename: 'bravo.pdf' },
-        ] })
-      }
-      if (path === '/history') return Promise.resolve({ data: [] })
-      return Promise.reject(new Error(`Unexpected API path: ${path}`))
-    })
-    api.post.mockReturnValue(queryRequest)
-
-    render(<Dashboard />)
-
-    const selector = await screen.findByLabelText('Document')
-    fireEvent.change(screen.getByPlaceholderText('What does this document say about...?'), {
-      target: { value: 'Question about alpha' },
-    })
-    fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
-    await waitFor(() => expect(screen.getAllByText('Thinking...')).toHaveLength(2))
-
-    fireEvent.change(selector, { target: { value: 'doc-b' } })
-    await act(async () => {
-      resolveQuery({ data: {
-        answer: 'Late alpha answer',
-        sources: [{ page: 1, score: 0.1, text: 'Late alpha source' }],
-      } })
-      await queryRequest
-    })
-
-    expect(screen.getByText('Document: bravo.pdf')).toBeInTheDocument()
-    expect(screen.queryByText('Late alpha answer')).not.toBeInTheDocument()
-    expect(screen.queryByText('Late alpha source')).not.toBeInTheDocument()
+    fireEvent.click((await screen.findByText('Prior inquiry')).closest('button'))
+    await waitFor(() => expect(api.get).toHaveBeenCalledWith('/conversations/chat-a/messages'))
+    expect(screen.getByText(/chat with doc-b/i)).toBeInTheDocument()
   })
 })

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Protocol
 
 
@@ -15,6 +16,8 @@ class DocumentRepository(Protocol):
         self, document_ids: list[str], user_id: str
     ) -> list[OwnedDocument] | None: ...
     def list_documents(self, user_id: str) -> list[dict]: ...
+    def soft_delete_document(self, document_id: str, user_id: str) -> bool: ...
+    def save_summary(self, document_id: str, user_id: str, summary: str) -> bool: ...
 
 
 class SupabaseDocumentRepository:
@@ -27,6 +30,7 @@ class SupabaseDocumentRepository:
             .select("id,filename,chroma_collection")
             .eq("id", document_id)
             .eq("user_id", user_id)
+            .is_("deleted_at", "null")
             .limit(1)
             .execute()
         )
@@ -43,6 +47,7 @@ class SupabaseDocumentRepository:
             .select("id,filename,chroma_collection")
             .in_("id", document_ids)
             .eq("user_id", user_id)
+            .is_("deleted_at", "null")
             .execute()
         )
         by_id = {
@@ -58,9 +63,32 @@ class SupabaseDocumentRepository:
     def list_documents(self, user_id: str) -> list[dict]:
         response = (
             self._client.table("user_documents")
-            .select("id,filename,file_size,chunk_count,created_at")
+            .select("id,filename,file_size,chunk_count,created_at,summary")
             .eq("user_id", user_id)
+            .is_("deleted_at", "null")
             .order("created_at", desc=True)
             .execute()
         )
         return response.data
+
+    def save_summary(self, document_id: str, user_id: str, summary: str) -> bool:
+        response = (
+            self._client.table("user_documents")
+            .update({"summary": summary})
+            .eq("id", document_id)
+            .eq("user_id", user_id)
+            .is_("deleted_at", "null")
+            .execute()
+        )
+        return bool(response.data)
+
+    def soft_delete_document(self, document_id: str, user_id: str) -> bool:
+        response = (
+            self._client.table("user_documents")
+            .update({"deleted_at": datetime.now(timezone.utc).isoformat()})
+            .eq("id", document_id)
+            .eq("user_id", user_id)
+            .is_("deleted_at", "null")
+            .execute()
+        )
+        return bool(response.data)
