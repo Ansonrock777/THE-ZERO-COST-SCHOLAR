@@ -1,0 +1,41 @@
+{
+  "documents": [
+    {
+      "id": "catalogue",
+      "pages": [
+        "The archive uses ordinary shelf labels for most materials.",
+        "Rare identifier ZXQ-419 marks the cobalt calibration record."
+      ]
+    },
+    {
+      "id": "handbook",
+      "pages": [
+        "Good retrieval balances keyword precision with semantic recall.",
+        "Comparisons should represent evidence from every selected document."
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "question": "Where is ZXQ-419 defined?",
+      "expected_documents": ["catalogue"],
+      "expected_pages": [{"document_id": "catalogue", "page": 2}],
+      "expected_terms": ["cobalt", "calibration"]
+    },
+    {
+      "question": "How should accurate search balance matching and meaning?",
+      "expected_documents": ["handbook"],
+      "expected_pages": [{"document_id": "handbook", "page": 1}],
+      "expected_terms": ["precision", "semantic recall"]
+    },
+    {
+      "question": "Compare the special record with the cross-document guidance.",
+      "expected_documents": ["catalogue", "handbook"],
+      "expected_pages": [
+        {"document_id": "catalogue", "page": 2},
+        {"document_id": "handbook", "page": 2}
+      ],
+      "expected_terms": ["ZXQ-419", "every selected document"]
+    }
+  ]
+}
