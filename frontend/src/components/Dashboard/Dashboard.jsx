@@ -1,16 +1,66 @@
 // frontend/src/components/Dashboard/Dashboard.jsx
 // Main protected route
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { supabase } from '../../lib/supabaseClient'
+import api from '../../lib/apiClient'
 import { Button } from '../ui/button'
 import UploadPanel from './UploadPanel'
+import DocumentSelector from './DocumentSelector'
 import QueryPanel from './QueryPanel'
 import HistoryPanel from './HistoryPanel'
 
 export default function Dashboard() {
   const { user } = useAuth()
-  const [currentDocument, setCurrentDocument] = useState(null)
+  const [documents, setDocuments] = useState([])
+  const [selectedId, setSelectedId] = useState('')
+  const [loadingDocuments, setLoadingDocuments] = useState(true)
+  const [documentsError, setDocumentsError] = useState('')
+
+  useEffect(() => {
+    let active = true
+
+    async function loadDocuments() {
+      setLoadingDocuments(true)
+      setDocumentsError('')
+
+      try {
+        const { data } = await api.get('/documents')
+        if (!active) return
+
+        const savedDocuments = data.map(document => ({
+          ...document,
+          document_id: document.id,
+        }))
+        setDocuments(currentDocuments => [
+          ...currentDocuments,
+          ...savedDocuments.filter(savedDocument => (
+            !currentDocuments.some(document => document.document_id === savedDocument.document_id)
+          )),
+        ])
+        setSelectedId(currentSelectedId => currentSelectedId || savedDocuments[0]?.document_id || '')
+      } catch {
+        if (active) {
+          setDocumentsError('Unable to load saved documents. Please refresh the page.')
+        }
+      } finally {
+        if (active) setLoadingDocuments(false)
+      }
+    }
+
+    loadDocuments()
+    return () => { active = false }
+  }, [])
+
+  const handleUploadComplete = (uploadedDocument) => {
+    setDocuments(currentDocuments => [
+      uploadedDocument,
+      ...currentDocuments.filter(document => document.document_id !== uploadedDocument.document_id),
+    ])
+    setSelectedId(uploadedDocument.document_id)
+  }
+
+  const currentDocument = documents.find(document => document.document_id === selectedId) ?? null
 
   return (
     <div className='min-h-screen bg-slate-50'>
@@ -26,8 +76,15 @@ export default function Dashboard() {
       </header>
 
       <main className='max-w-3xl mx-auto p-6 space-y-6'>
-        <UploadPanel onUploadComplete={setCurrentDocument} />
-        <QueryPanel document={currentDocument} />
+        <UploadPanel onUploadComplete={handleUploadComplete} />
+        <DocumentSelector
+          documents={documents}
+          selectedId={selectedId}
+          onChange={setSelectedId}
+          loading={loadingDocuments}
+          error={documentsError}
+        />
+        <QueryPanel key={currentDocument?.document_id} document={currentDocument} />
         <HistoryPanel />
       </main>
     </div>

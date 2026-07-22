@@ -7,6 +7,10 @@ import { Input } from '../ui/input'
 import SourceChunks from './SourceChunks'
 import FormattedAnswer from './FormattedAnswer'
 
+export function createQueryPayload(question, document) {
+  return { question, document_id: document.document_id }
+}
+
 export default function QueryPanel({ document }) {
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState('')
@@ -20,11 +24,7 @@ export default function QueryPanel({ document }) {
     setLoading(true); setError(''); setAnswer(''); setSources([])
 
     try {
-      const { data } = await api.post('/query', {
-        question,
-        document_id: document.document_id,
-        collection_name: document.collection_name
-      })
+      const { data } = await api.post('/query', createQueryPayload(question, document))
       setAnswer(data.answer)
       setSources(data.sources)
     } catch (err) {
@@ -45,7 +45,7 @@ export default function QueryPanel({ document }) {
   return (
     <div className='border border-slate-200 rounded-lg p-6 space-y-4'>
       <h2 className='font-semibold text-lg'>Ask a Question</h2>
-      <p className='text-sm text-slate-500'>Document: {document.filename ?? document.collection_name}</p>
+      <p className='text-sm text-slate-500'>Document: {document.filename ?? 'Selected document'}</p>
       <form onSubmit={handleAsk} className='flex gap-2'>
         <Input
           placeholder='What does this document say about...?'

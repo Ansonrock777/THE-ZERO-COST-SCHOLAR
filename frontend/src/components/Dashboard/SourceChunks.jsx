@@ -15,7 +15,9 @@ export default function SourceChunks({ sources }) {
               </span>
               Page {source.page}
             </span>
-            <span className='text-slate-400'>relevance {source.score}</span>
+            <span className='text-slate-400'>
+              {typeof source.score === 'number' ? `distance ${source.score}` : 'adjacent context'}
+            </span>
           </div>
           <p className='text-sm text-slate-600 whitespace-pre-wrap leading-relaxed'>{source.text}</p>
         </div>
