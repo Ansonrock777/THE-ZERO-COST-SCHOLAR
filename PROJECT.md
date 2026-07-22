@@ -55,11 +55,11 @@ backend\venv\Scripts\python.exe -m compileall -q backend -x "(venv|\.venv|__pyca
 
 - ~~Approve the production workspace design.~~
 - ~~Write the focused RAG foundation implementation plan.~~
-- Add persistent BM25 indexes and hybrid semantic/keyword retrieval.
-- Support authorized multi-document queries.
-- Add bounded prompt construction and document-injection defenses.
-- Add identifier-and-numeric-only pipeline telemetry.
-- Add deterministic retrieval evaluation fixtures.
+- ~~Add persistent BM25 indexes and hybrid semantic/keyword retrieval.~~
+- ~~Support authorized multi-document queries.~~
+- ~~Add bounded prompt construction and document-injection defenses.~~
+- ~~Add identifier-and-numeric-only pipeline telemetry.~~
+- ~~Add deterministic retrieval evaluation fixtures.~~
 
 ### P1 - Verification workspace
 
