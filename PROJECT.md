@@ -63,21 +63,21 @@ backend\venv\Scripts\python.exe -m compileall -q backend -x "(venv|\.venv|__pyca
 
 ### P1 - Verification workspace
 
-- Build the academic/library interface in light and dark themes.
-- Add the resizable chat/PDF split view and mobile tabs.
-- Store PDFs locally and connect citations to page navigation and highlights.
-- Add multi-document selection and durable conversation history.
+- ~~Build the academic/library interface in light and dark themes.~~
+- ~~Add the resizable chat/PDF split view and mobile tabs.~~
+- ~~Store PDFs locally and connect citations to page navigation and highlights.~~
+- ~~Add multi-document selection and durable conversation history.~~
 
 ### P2 - Guided interaction
 
-- Generate a one-paragraph summary after upload.
-- Add selected-text questions and Stop, Retry, and Copy controls.
-- Add answer-detail and citation-placement settings.
+- ~~Generate a one-paragraph summary after upload.~~
+- ~~Add selected-text questions and Stop, Retry, and Copy controls.~~
+- ~~Add answer-style and citation-placement settings.~~
 
 ### P3 - Developer visibility
 
-- Add the `DEV_MODE` telemetry dashboard.
-- Surface deterministic evaluation warnings without blocking builds.
+- ~~Add the `DEV_MODE` telemetry dashboard.~~
+- ~~Surface deterministic evaluation warnings without blocking builds.~~
 
 ## Future ideas
 
@@ -85,6 +85,7 @@ backend\venv\Scripts\python.exe -m compileall -q backend -x "(venv|\.venv|__pyca
 - OCR for scanned PDFs.
 - A free web-search provider behind the disabled-by-default provider interface.
 - Shareable read-only conversations and optional answer feedback.
+- Server-side cancellation of an external generation call after the provider request has begun.
 
 ## Rejected or deferred ideas
 
