@@ -11,13 +11,17 @@ from time import perf_counter
 from uuid import uuid4
 
 
-CONTENT_KEYS = {"question", "prompt", "answer", "text", "excerpt", "content"}
+CONTENT_KEYS = {"question", "answer", "text", "excerpt", "content"}
 
 
 def _is_content_key(name: str) -> bool:
     normalized = name.lower()
     parts = set(normalized.split("_"))
-    return bool(parts & CONTENT_KEYS) or normalized.endswith("_text")
+    return (
+        normalized == "prompt"
+        or bool(parts & CONTENT_KEYS)
+        or normalized.endswith("_text")
+    )
 
 
 @dataclass

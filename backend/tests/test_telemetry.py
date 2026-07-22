@@ -29,6 +29,14 @@ def test_trace_rejects_non_numeric_metric_values():
         trace.add_metric("vector_candidates", "twelve")
 
 
+def test_numeric_prompt_token_count_is_allowed():
+    trace = QueryTrace.create(user_id="user-1", document_count=1)
+
+    trace.add_metric("prompt_tokens", 512)
+
+    assert trace.metrics["prompt_tokens"] == 512
+
+
 def test_stage_timer_records_elapsed_milliseconds(monkeypatch):
     values = iter([10.0, 10.125])
     monkeypatch.setattr("telemetry.perf_counter", lambda: next(values))

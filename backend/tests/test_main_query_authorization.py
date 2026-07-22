@@ -99,7 +99,7 @@ async def test_owner_query_uses_server_collection_and_logs(app_module):
         user_id="owner",
     )
 
-    app_module.query_document.assert_called_once_with("question", [owned])
+    app_module.query_document.assert_called_once_with("question", [owned], user_id="owner")
     assert repository.get_owned_documents_calls == [(["doc-1"], "owner")]
     assert app_module.supabase.inserted[0]["document_id"] == "doc-1"
 
@@ -122,7 +122,7 @@ async def test_multiple_owned_documents_are_authorized_together(app_module):
         user_id="owner",
     )
 
-    app_module.query_document.assert_called_once_with("compare", owned)
+    app_module.query_document.assert_called_once_with("compare", owned, user_id="owner")
     assert repository.get_owned_documents_calls == [(["doc-1", "doc-2"], "owner")]
 
 

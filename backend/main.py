@@ -83,7 +83,7 @@ async def ask_question(
     if documents is None:
         raise HTTPException(404, 'Document not found')
 
-    result = query_document(body.question, documents)
+    result = query_document(body.question, documents, user_id=user_id)
 
     # Save the query to history
     supabase.table('query_logs').insert({
