@@ -15,9 +15,14 @@ class FakeRepository:
     def __init__(self, document):
         self.document = document
         self.get_owned_document_calls = []
+        self.get_owned_documents_calls = []
 
     def get_owned_document(self, document_id, user_id):
         self.get_owned_document_calls.append((document_id, user_id))
+        return self.document
+
+    def get_owned_documents(self, document_ids, user_id):
+        self.get_owned_documents_calls.append((document_ids, user_id))
         return self.document
 
 
@@ -74,16 +79,15 @@ async def test_foreign_document_is_rejected_before_query_or_logging(app_module):
 
     assert error.value.status_code == 404
     assert error.value.detail == "Document not found"
-    assert repository.get_owned_document_calls == [("foreign", "attacker")]
+    assert repository.get_owned_documents_calls == [(["foreign"], "attacker")]
     app_module.query_document.assert_not_called()
     assert app_module.supabase.inserted == []
 
 
 @pytest.mark.asyncio
 async def test_owner_query_uses_server_collection_and_logs(app_module):
-    repository = FakeRepository(
-        document=OwnedDocument("doc-1", "guide.pdf", "stored-collection")
-    )
+    owned = OwnedDocument("doc-1", "guide.pdf", "stored-collection")
+    repository = FakeRepository(document=[owned])
     app_module.document_repository = repository
     app_module.query_document = Mock(return_value={
         "answer": "answer", "sources": [], "model": "configured-model"
@@ -95,13 +99,60 @@ async def test_owner_query_uses_server_collection_and_logs(app_module):
         user_id="owner",
     )
 
-    app_module.query_document.assert_called_once_with("question", "stored-collection")
-    assert repository.get_owned_document_calls == [("doc-1", "owner")]
+    app_module.query_document.assert_called_once_with("question", [owned])
+    assert repository.get_owned_documents_calls == [(["doc-1"], "owner")]
     assert app_module.supabase.inserted[0]["document_id"] == "doc-1"
+
+
+@pytest.mark.asyncio
+async def test_multiple_owned_documents_are_authorized_together(app_module):
+    owned = [
+        OwnedDocument("doc-1", "one.pdf", "collection-one"),
+        OwnedDocument("doc-2", "two.pdf", "collection-two"),
+    ]
+    repository = FakeRepository(document=owned)
+    app_module.document_repository = repository
+    app_module.query_document = Mock(return_value={
+        "answer": "answer", "sources": [], "model": "configured-model"
+    })
+    app_module.supabase = FakeLoggingClient()
+
+    await app_module.ask_question(
+        app_module.QueryRequest(question="compare", document_ids=["doc-1", "doc-2"]),
+        user_id="owner",
+    )
+
+    app_module.query_document.assert_called_once_with("compare", owned)
+    assert repository.get_owned_documents_calls == [(["doc-1", "doc-2"], "owner")]
 
 
 def test_query_request_rejects_collection_name(app_module):
     with pytest.raises(ValidationError):
         app_module.QueryRequest(
             question="question", document_id="doc-1", collection_name="client-value"
+        )
+
+
+def test_query_request_normalizes_legacy_document(app_module):
+    request = app_module.QueryRequest(question="question", document_id="doc-1")
+
+    assert request.selected_document_ids == ["doc-1"]
+
+
+def test_query_request_normalizes_multiple_documents(app_module):
+    request = app_module.QueryRequest(question="compare", document_ids=["a", "b"])
+
+    assert request.selected_document_ids == ["a", "b"]
+
+
+@pytest.mark.parametrize("values", [[], ["a", "a"], [str(i) for i in range(11)]])
+def test_query_request_rejects_invalid_document_lists(app_module, values):
+    with pytest.raises(ValidationError):
+        app_module.QueryRequest(question="question", document_ids=values)
+
+
+def test_query_request_rejects_legacy_and_list_fields_together(app_module):
+    with pytest.raises(ValidationError):
+        app_module.QueryRequest(
+            question="question", document_id="doc-1", document_ids=["doc-2"]
         )

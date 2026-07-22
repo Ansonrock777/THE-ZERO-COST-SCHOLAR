@@ -4,7 +4,7 @@ load_dotenv()  # Must run before any module-level os.getenv() in auth/ingestion/
 
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 from auth import get_current_user
 from document_repository import SupabaseDocumentRepository
 from ingestion import ingest_pdf
@@ -25,7 +25,23 @@ document_repository = SupabaseDocumentRepository(supabase)
 class QueryRequest(BaseModel):
     model_config = ConfigDict(extra='forbid')
     question: str
-    document_id: str  # UUID from user_documents table
+    document_id: str | None = None
+    document_ids: list[str] | None = None
+
+    @model_validator(mode='after')
+    def validate_document_selection(self):
+        if (self.document_id is None) == (self.document_ids is None):
+            raise ValueError('Provide exactly one of document_id or document_ids')
+        if self.document_ids is not None:
+            if not 1 <= len(self.document_ids) <= 10:
+                raise ValueError('Select between 1 and 10 documents')
+            if len(set(self.document_ids)) != len(self.document_ids):
+                raise ValueError('Duplicate document IDs are not allowed')
+        return self
+
+    @property
+    def selected_document_ids(self) -> list[str]:
+        return self.document_ids if self.document_ids is not None else [self.document_id]
 
 
 @app.post('/upload')
@@ -61,16 +77,18 @@ async def ask_question(
     body: QueryRequest,
     user_id: str = Depends(get_current_user)
 ):
-    document = document_repository.get_owned_document(body.document_id, user_id)
-    if document is None:
+    documents = document_repository.get_owned_documents(
+        body.selected_document_ids, user_id
+    )
+    if documents is None:
         raise HTTPException(404, 'Document not found')
 
-    result = query_document(body.question, document.chroma_collection)
+    result = query_document(body.question, documents)
 
     # Save the query to history
     supabase.table('query_logs').insert({
         'user_id': user_id,
-        'document_id': body.document_id,
+        'document_id': body.selected_document_ids[0],
         'question': body.question,
         'answer': result['answer'],
         'sources': result['sources'],

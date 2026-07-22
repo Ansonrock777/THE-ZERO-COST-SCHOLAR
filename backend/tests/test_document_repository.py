@@ -19,6 +19,10 @@ class FakeQueryBuilder:
         self.calls.append(("eq", column, value))
         return self
 
+    def in_(self, column, values):
+        self.calls.append(("in", column, values))
+        return self
+
     def limit(self, count):
         self.calls.append(("limit", count))
         return self
@@ -68,3 +72,26 @@ def test_list_documents_does_not_select_chroma_collection():
 
     selected = next(call[1] for call in client.builder.calls if call[0] == "select")
     assert "chroma_collection" not in selected
+
+
+def test_get_owned_documents_preserves_request_order():
+    client = FakeClient(data=[
+        {"id": "doc-b", "filename": "b.pdf", "chroma_collection": "collection-b"},
+        {"id": "doc-a", "filename": "a.pdf", "chroma_collection": "collection-a"},
+    ])
+    repository = SupabaseDocumentRepository(client)
+
+    documents = repository.get_owned_documents(["doc-a", "doc-b"], "user-1")
+
+    assert [document.id for document in documents] == ["doc-a", "doc-b"]
+    assert ("in", "id", ["doc-a", "doc-b"]) in client.builder.calls
+    assert ("eq", "user_id", "user-1") in client.builder.calls
+
+
+def test_get_owned_documents_returns_none_when_any_document_is_missing():
+    client = FakeClient(data=[
+        {"id": "doc-a", "filename": "a.pdf", "chroma_collection": "collection-a"},
+    ])
+    repository = SupabaseDocumentRepository(client)
+
+    assert repository.get_owned_documents(["doc-a", "foreign"], "user-1") is None
