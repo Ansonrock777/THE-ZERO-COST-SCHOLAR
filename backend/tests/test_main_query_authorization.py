@@ -1,4 +1,5 @@
 import importlib.util
+import io
 import sys
 from pathlib import Path
 from types import ModuleType, SimpleNamespace
@@ -6,6 +7,7 @@ from unittest.mock import Mock
 
 import pytest
 from fastapi import HTTPException
+from fastapi import UploadFile
 from pydantic import ValidationError
 
 from document_repository import OwnedDocument
@@ -16,6 +18,7 @@ class FakeRepository:
         self.document = document
         self.get_owned_document_calls = []
         self.get_owned_documents_calls = []
+        self.soft_delete_calls = []
 
     def get_owned_document(self, document_id, user_id):
         self.get_owned_document_calls.append((document_id, user_id))
@@ -24,6 +27,10 @@ class FakeRepository:
     def get_owned_documents(self, document_ids, user_id):
         self.get_owned_documents_calls.append((document_ids, user_id))
         return self.document
+
+    def soft_delete_document(self, document_id, user_id):
+        self.soft_delete_calls.append((document_id, user_id))
+        return self.document is not None
 
 
 class FakeLoggingClient:
@@ -39,6 +46,11 @@ class FakeLoggingClient:
 
     def execute(self):
         return SimpleNamespace(data=[])
+
+
+class UploadLoggingClient(FakeLoggingClient):
+    def execute(self):
+        return SimpleNamespace(data=[self.inserted[-1]])
 
 
 @pytest.fixture
@@ -126,6 +138,35 @@ async def test_multiple_owned_documents_are_authorized_together(app_module):
     assert repository.get_owned_documents_calls == [(["doc-1", "doc-2"], "owner")]
 
 
+@pytest.mark.asyncio
+async def test_foreign_pdf_file_is_rejected_before_storage_access(app_module):
+    repository = FakeRepository(document=None)
+    app_module.document_repository = repository
+    app_module.pdf_storage = Mock()
+
+    with pytest.raises(HTTPException) as error:
+        await app_module.get_document_file("foreign", user_id="attacker")
+
+    assert error.value.status_code == 404
+    app_module.pdf_storage.path_for.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_deleting_owned_document_removes_file_and_soft_deletes(app_module):
+    repository = FakeRepository(
+        document=OwnedDocument("doc-1", "guide.pdf", "stored-collection")
+    )
+    app_module.document_repository = repository
+    app_module.pdf_storage = Mock()
+    app_module.pdf_storage.delete.return_value = True
+
+    result = await app_module.delete_document("doc-1", user_id="owner")
+
+    assert result == {"deleted": True, "document_id": "doc-1"}
+    app_module.pdf_storage.delete.assert_called_once_with("owner", "doc-1")
+    assert repository.soft_delete_calls == [("doc-1", "owner")]
+
+
 def test_query_request_rejects_collection_name(app_module):
     with pytest.raises(ValidationError):
         app_module.QueryRequest(
@@ -156,3 +197,37 @@ def test_query_request_rejects_legacy_and_list_fields_together(app_module):
         app_module.QueryRequest(
             question="question", document_id="doc-1", document_ids=["doc-2"]
         )
+
+
+@pytest.mark.asyncio
+async def test_upload_persists_original_under_server_generated_document_id(app_module):
+    app_module.ingest_pdf = Mock(return_value={
+        "collection_name": "stored-collection",
+        "chunk_count": 4,
+        "page_count": 2,
+    })
+    app_module.pdf_storage = Mock()
+    app_module.supabase = UploadLoggingClient()
+    uploaded = UploadFile(filename="guide.pdf", file=io.BytesIO(b"%PDF-1.7"))
+
+    result = await app_module.upload_pdf(uploaded, user_id="owner")
+
+    inserted = app_module.supabase.inserted[0]
+    assert inserted["id"] == result["document_id"]
+    app_module.pdf_storage.save.assert_called_once_with(
+        "owner", result["document_id"], b"%PDF-1.7"
+    )
+    app_module.ingest_pdf.assert_called_once_with(b"%PDF-1.7", "guide.pdf", "owner")
+
+
+@pytest.mark.asyncio
+async def test_upload_rejects_files_over_configured_limit_before_storage(app_module):
+    app_module.MAX_PDF_BYTES = 4
+    app_module.pdf_storage = Mock()
+    uploaded = UploadFile(filename="large.pdf", file=io.BytesIO(b"12345"))
+
+    with pytest.raises(HTTPException) as error:
+        await app_module.upload_pdf(uploaded, user_id="owner")
+
+    assert error.value.status_code == 413
+    app_module.pdf_storage.save.assert_not_called()
