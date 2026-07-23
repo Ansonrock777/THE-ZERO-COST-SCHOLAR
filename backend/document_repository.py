@@ -12,6 +12,7 @@ class OwnedDocument:
 class DocumentRepository(Protocol):
     def get_owned_document(self, document_id: str, user_id: str) -> OwnedDocument | None: ...
     def list_documents(self, user_id: str) -> list[dict]: ...
+    def delete_document(self, document_id: str, user_id: str) -> None: ...
 
 
 class SupabaseDocumentRepository:
@@ -41,3 +42,12 @@ class SupabaseDocumentRepository:
             .execute()
         )
         return response.data
+
+    def delete_document(self, document_id: str, user_id: str) -> None:
+        # query_logs rows cascade via the FK's ON DELETE CASCADE (see
+        # supabase/migrations/001_init.sql) — no separate cleanup needed here.
+        self._client.table("user_documents") \
+            .delete() \
+            .eq("id", document_id) \
+            .eq("user_id", user_id) \
+            .execute()

@@ -15,6 +15,10 @@ class FakeQueryBuilder:
         self.calls.append(("select", columns))
         return self
 
+    def delete(self):
+        self.calls.append(("delete",))
+        return self
+
     def eq(self, column, value):
         self.calls.append(("eq", column, value))
         return self
@@ -68,3 +72,15 @@ def test_list_documents_does_not_select_chroma_collection():
 
     selected = next(call[1] for call in client.builder.calls if call[0] == "select")
     assert "chroma_collection" not in selected
+
+
+def test_delete_document_scopes_by_document_and_user():
+    client = FakeClient(data=[])
+    repository = SupabaseDocumentRepository(client)
+
+    repository.delete_document("doc-1", "user-1")
+
+    assert ("table", "user_documents") in client.builder.calls
+    assert ("delete",) in client.builder.calls
+    assert ("eq", "id", "doc-1") in client.builder.calls
+    assert ("eq", "user_id", "user-1") in client.builder.calls

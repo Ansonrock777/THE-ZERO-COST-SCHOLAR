@@ -1,10 +1,12 @@
 // frontend/src/components/Dashboard/FormattedAnswer.jsx
 // Renders the LLM's answer: bold, bullet/numbered lists, and inline
 // [Source N] / 【N】 citation markers as small badges — without a markdown dependency.
+// When `sources`/`onCitationClick` are given and the cited source has a known
+// page, the badge becomes clickable (jumps the PDF pane to that page).
 
 const CITATION_RE = /\[Source\s+(\d+)\]|【(\d+)】/gu
 
-function renderInline(text, keyPrefix) {
+function renderInline(text, keyPrefix, sources, onCitationClick) {
   // Split on **bold** first, then run citation matching on the plain segments.
   const boldParts = text.split(/(\*\*[^*]+\*\*)/g)
   const nodes = []
@@ -26,11 +28,29 @@ function renderInline(text, keyPrefix) {
         nodes.push(part.slice(lastIndex, match.index))
       }
       const num = match[1] ?? match[2]
+      const source = sources?.[Number(num) - 1]
+      const clickable = source && typeof source.page === 'number'
+
       nodes.push(
-        <sup key={`${keyPrefix}-${n++}`}
-          className='inline-block bg-slate-200 text-slate-700 rounded px-1 text-[10px] font-semibold mx-0.5 not-italic'>
+        <sup
+          key={`${keyPrefix}-${n++}`}
+          role={clickable ? 'button' : undefined}
+          tabIndex={clickable ? 0 : undefined}
+          onClick={clickable ? () => onCitationClick(source, Number(num) - 1) : undefined}
+          onKeyDown={clickable ? (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onCitationClick(source, Number(num) - 1)
+            }
+          } : undefined}
+          className={`mx-0.5 inline-flex min-w-[1.15em] items-center justify-center rounded-[4px] px-1 text-[10px] font-semibold not-italic ${
+            clickable
+              ? 'cursor-pointer bg-highlight-bg text-highlight-text ring-1 ring-highlight-border/70 transition hover:brightness-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight-border'
+              : 'bg-black/[0.06] text-ink-muted dark:bg-white/10 dark:text-slate-300'
+          }`}
+        >
           {num}
-        </sup>
+        </sup>,
       )
       lastIndex = CITATION_RE.lastIndex
     }
@@ -52,7 +72,7 @@ export function stripMarkdown(text) {
     .trim()
 }
 
-export default function FormattedAnswer({ text }) {
+export default function FormattedAnswer({ text, sources, onCitationClick = () => {} }) {
   if (!text) return null
 
   const lines = text.split('\n')
@@ -66,7 +86,9 @@ export default function FormattedAnswer({ text }) {
     blocks.push(
       <Tag key={`list-${blocks.length}`}
         className={Tag === 'ol' ? 'list-decimal pl-5 space-y-1' : 'list-disc pl-5 space-y-1'}>
-        {listBuffer.map((item, i) => <li key={i}>{renderInline(item, `li-${blocks.length}-${i}`)}</li>)}
+        {listBuffer.map((item, i) => (
+          <li key={i}>{renderInline(item, `li-${blocks.length}-${i}`, sources, onCitationClick)}</li>
+        ))}
       </Tag>
     )
     listBuffer = []
@@ -89,7 +111,7 @@ export default function FormattedAnswer({ text }) {
     } else {
       flushList()
       if (trimmed.length > 0) {
-        blocks.push(<p key={`p-${i}`}>{renderInline(trimmed, `p-${i}`)}</p>)
+        blocks.push(<p key={`p-${i}`}>{renderInline(trimmed, `p-${i}`, sources, onCitationClick)}</p>)
       }
     }
   })

@@ -2,6 +2,7 @@
 import os
 import uuid
 import tempfile
+import chromadb
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -66,3 +67,8 @@ def ingest_pdf(file_bytes: bytes, filename: str, user_id: str) -> dict:
         }
     finally:
         os.unlink(tmp_path)  # Always clean up the temp file
+
+
+def delete_collection(collection_name: str) -> None:
+    client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
+    client.delete_collection(name=collection_name)
