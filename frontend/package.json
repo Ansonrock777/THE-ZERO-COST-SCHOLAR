@@ -10,21 +10,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@sanity/diff-match-patch": "^3.2.0",
     "@supabase/supabase-js": "^2.45.0",
     "axios": "^1.7.0",
-<<<<<<< HEAD
     "lucide-react": "^1.25.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-pdf": "^10.1.0",
-=======
-    "lucide-react": "^1.26.0",
-    "pdfjs-dist": "5.4.296",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-pdf": "^10.4.1",
->>>>>>> c47bfeb9ff1ca81127b0cc132698d99ad075ecf5
     "react-router-dom": "^6.26.0"
   },
   "devDependencies": {

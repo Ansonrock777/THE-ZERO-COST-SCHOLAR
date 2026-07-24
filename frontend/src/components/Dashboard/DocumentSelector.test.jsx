@@ -1,11 +1,9 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 import DocumentSelector from './DocumentSelector'
 
-afterEach(cleanup)
-
 describe('DocumentSelector', () => {
-  it('lists documents and emits the chosen document ID on click', () => {
+  it('labels the native document selector and emits the chosen document ID', () => {
     const onChange = vi.fn()
 
     render(
@@ -21,27 +19,10 @@ describe('DocumentSelector', () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: 'older.pdf' }))
+    const selector = screen.getByLabelText('Document')
+    fireEvent.change(selector, { target: { value: 'doc-2' } })
 
     expect(onChange).toHaveBeenCalledWith('doc-2')
-  })
-
-  it('marks the currently selected document', () => {
-    render(
-      <DocumentSelector
-        documents={[
-          { document_id: 'doc-1', filename: 'newest.pdf' },
-          { document_id: 'doc-2', filename: 'older.pdf' },
-        ]}
-        selectedId='doc-1'
-        onChange={vi.fn()}
-        loading={false}
-        error=''
-      />,
-    )
-
-    expect(screen.getByRole('button', { name: 'newest.pdf' })).toHaveAttribute('aria-current', 'true')
-    expect(screen.getByRole('button', { name: 'older.pdf' })).not.toHaveAttribute('aria-current')
   })
 
   it('announces when saved documents are loading', () => {
@@ -60,26 +41,5 @@ describe('DocumentSelector', () => {
     render(<DocumentSelector documents={[]} selectedId='' onChange={vi.fn()} loading={false} error='' />)
 
     expect(screen.getByText('No uploaded documents yet.')).toBeInTheDocument()
-  })
-
-  it('calls onDelete with the document, without also selecting it', () => {
-    const onChange = vi.fn()
-    const onDelete = vi.fn()
-
-    render(
-      <DocumentSelector
-        documents={[{ document_id: 'doc-1', filename: 'newest.pdf' }]}
-        selectedId=''
-        onChange={onChange}
-        loading={false}
-        error=''
-        onDelete={onDelete}
-      />,
-    )
-
-    fireEvent.click(screen.getByRole('button', { name: 'Delete newest.pdf' }))
-
-    expect(onDelete).toHaveBeenCalledWith({ document_id: 'doc-1', filename: 'newest.pdf' })
-    expect(onChange).not.toHaveBeenCalled()
   })
 })

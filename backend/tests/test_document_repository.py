@@ -15,10 +15,6 @@ class FakeQueryBuilder:
         self.calls.append(("select", columns))
         return self
 
-    def delete(self):
-        self.calls.append(("delete",))
-        return self
-
     def eq(self, column, value):
         self.calls.append(("eq", column, value))
         return self
@@ -87,7 +83,6 @@ def test_list_documents_does_not_select_chroma_collection():
     assert "chroma_collection" not in selected
 
 
-<<<<<<< HEAD
 def test_get_owned_documents_preserves_request_order():
     client = FakeClient(data=[
         {"id": "doc-b", "filename": "b.pdf", "chroma_collection": "collection-b"},
@@ -118,15 +113,4 @@ def test_soft_delete_filters_by_owner_and_document():
     assert repository.soft_delete_document("doc-a", "user-1") is True
     assert any(call[0] == "update" and "deleted_at" in call[1] for call in client.builder.calls)
     assert ("eq", "id", "doc-a") in client.builder.calls
-=======
-def test_delete_document_scopes_by_document_and_user():
-    client = FakeClient(data=[])
-    repository = SupabaseDocumentRepository(client)
-
-    repository.delete_document("doc-1", "user-1")
-
-    assert ("table", "user_documents") in client.builder.calls
-    assert ("delete",) in client.builder.calls
-    assert ("eq", "id", "doc-1") in client.builder.calls
->>>>>>> c47bfeb9ff1ca81127b0cc132698d99ad075ecf5
     assert ("eq", "user_id", "user-1") in client.builder.calls
