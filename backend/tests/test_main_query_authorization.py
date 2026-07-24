@@ -85,6 +85,7 @@ class UploadLoggingClient(FakeLoggingClient):
 def app_module(monkeypatch):
     ingestion = ModuleType("ingestion")
     ingestion.ingest_pdf = Mock()
+    ingestion.delete_collection = Mock()
     query = ModuleType("query")
     query.query_document = Mock()
     database = ModuleType("database")

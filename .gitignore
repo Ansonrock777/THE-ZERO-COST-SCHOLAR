@@ -20,3 +20,10 @@ frontend/dist/
 # OS
 .DS_Store
 Thumbs.db
+skill-observations/cross-cutting-principles.md
+skill-observations/last-review-date.txt
+skill-observations/log.md
+tmp/test-chroma/299acfd5-9c1d-4c85-8f50-066832bc0459/length.bin
+tmp/test-chroma/299acfd5-9c1d-4c85-8f50-066832bc0459/header.bin
+tmp/test-chroma/299acfd5-9c1d-4c85-8f50-066832bc0459/link_lists.bin
+tmp/test-chroma/chroma.sqlite3

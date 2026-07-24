@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+<<<<<<< HEAD
 :root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #232018; background: #f2efe8; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
@@ -141,3 +142,40 @@ button:focus-visible,input:focus-visible,textarea:focus-visible { outline:3px so
 .evaluation-note { margin-bottom:24px; padding:16px 19px; color:#3f392e; background:#fff8df; border-left:3px solid #d3b567; }
 .evaluation-note p { margin:5px 0 0; line-height:1.5; }
 @media (prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; animation-duration:.01ms!important; } }
+=======
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply font-sans;
+  }
+
+  /* Amber "highlighter" selection — on-brand for a reading tool. */
+  ::selection {
+    background-color: #fde68a;
+    color: #7c5a10;
+  }
+}
+
+@layer utilities {
+  /* Quiet, thin scrollbars so the panes read as calm reading surfaces. */
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(148 163 184 / 0.4) transparent;
+  }
+  .scrollbar-slim::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    background-color: rgb(148 163 184 / 0.35);
+    border-radius: 9999px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(148 163 184 / 0.55);
+  }
+}
+>>>>>>> c47bfeb9ff1ca81127b0cc132698d99ad075ecf5

@@ -16,8 +16,12 @@ class DocumentRepository(Protocol):
         self, document_ids: list[str], user_id: str
     ) -> list[OwnedDocument] | None: ...
     def list_documents(self, user_id: str) -> list[dict]: ...
+<<<<<<< HEAD
     def soft_delete_document(self, document_id: str, user_id: str) -> bool: ...
     def save_summary(self, document_id: str, user_id: str, summary: str) -> bool: ...
+=======
+    def delete_document(self, document_id: str, user_id: str) -> None: ...
+>>>>>>> c47bfeb9ff1ca81127b0cc132698d99ad075ecf5
 
 
 class SupabaseDocumentRepository:
@@ -71,6 +75,7 @@ class SupabaseDocumentRepository:
         )
         return response.data
 
+<<<<<<< HEAD
     def save_summary(self, document_id: str, user_id: str, summary: str) -> bool:
         response = (
             self._client.table("user_documents")
@@ -92,3 +97,13 @@ class SupabaseDocumentRepository:
             .execute()
         )
         return bool(response.data)
+=======
+    def delete_document(self, document_id: str, user_id: str) -> None:
+        # query_logs rows cascade via the FK's ON DELETE CASCADE (see
+        # supabase/migrations/001_init.sql) — no separate cleanup needed here.
+        self._client.table("user_documents") \
+            .delete() \
+            .eq("id", document_id) \
+            .eq("user_id", user_id) \
+            .execute()
+>>>>>>> c47bfeb9ff1ca81127b0cc132698d99ad075ecf5
