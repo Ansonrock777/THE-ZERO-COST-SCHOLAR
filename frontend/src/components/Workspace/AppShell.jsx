@@ -21,7 +21,6 @@ export default function AppShell({
   onToggleDocument,
   onMobilePaneChange,
   onThemeChange,
-  onNewConversation,
   onSelectConversation,
   onPinConversation,
   onDeleteConversation,
@@ -78,7 +77,6 @@ export default function AppShell({
         selectedDocumentIds={selectedDocumentIds}
         activeConversationId={activeConversationId}
         onToggleDocument={onToggleDocument}
-        onNewConversation={onNewConversation}
         onSelectConversation={onSelectConversation}
         onPinConversation={onPinConversation}
         onDeleteConversation={onDeleteConversation}

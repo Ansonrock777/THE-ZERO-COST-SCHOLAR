@@ -163,7 +163,6 @@ export default function Dashboard({ user, onSignOut }) {
         onToggleDocument={toggleDocument}
         onMobilePaneChange={mobilePane => setPreferences(current => ({ ...current, mobilePane }))}
         onThemeChange={theme => setPreferences(current => ({ ...current, theme }))}
-        onNewConversation={newConversation}
         onSelectConversation={selectConversation}
         onPinConversation={pinConversation}
         onDeleteConversation={deleteConversation}

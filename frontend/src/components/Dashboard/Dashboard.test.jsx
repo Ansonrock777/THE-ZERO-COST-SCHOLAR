@@ -44,19 +44,6 @@ describe('Dashboard production workspace', () => {
     expect(screen.getByText(/chat with doc-b/i)).toBeInTheDocument()
   })
 
-  it('New inquiry creates a conversation for the current selection', async () => {
-    api.post.mockResolvedValue({ data: { id: 'chat-new', title: 'New inquiry', document_ids: ['doc-a'], pinned: false } })
-    render(<Dashboard />)
-    await screen.findByText(/chat with doc-a/i)
-
-    fireEvent.click(screen.getByRole('button', { name: /new inquiry/i }))
-
-    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/conversations', {
-      document_ids: ['doc-a'],
-      title: 'New inquiry',
-    }))
-  })
-
   it('clicking a citation hands its page to the PDF pane', async () => {
     render(<Dashboard />)
     await screen.findByText(/chat with doc-a/i)

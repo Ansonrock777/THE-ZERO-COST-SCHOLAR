@@ -23,7 +23,6 @@ describe('AppShell', () => {
         onToggleDocument={onToggleDocument}
         onMobilePaneChange={vi.fn()}
         onThemeChange={vi.fn()}
-        onNewConversation={vi.fn()}
       >
         <div>Chat workspace</div>
         <div>PDF workspace</div>
@@ -49,7 +48,6 @@ describe('AppShell', () => {
         onToggleDocument={vi.fn()}
         onMobilePaneChange={vi.fn()}
         onThemeChange={onThemeChange}
-        onNewConversation={vi.fn()}
       >
         <div>Chat</div><div>PDF</div>
       </AppShell>,

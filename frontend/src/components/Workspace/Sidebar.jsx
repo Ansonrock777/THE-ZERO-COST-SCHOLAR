@@ -10,7 +10,6 @@ export default function Sidebar({
   selectedDocumentIds = [],
   activeConversationId,
   onToggleDocument,
-  onNewConversation,
   onSelectConversation,
   onPinConversation,
   onDeleteConversation,
@@ -40,12 +39,6 @@ export default function Sidebar({
         </button>
       </div>
 
-      <div className='sidebar-section'>
-        <button type='button' className='new-inquiry' onClick={onNewConversation}>
-          <Plus size={15} strokeWidth={2} aria-hidden='true' /><span>New inquiry</span>
-        </button>
-      </div>
-
       <div className='sidebar-nav'>
         <button type='button' className='sidebar-nav-item' aria-current={section === 'library'} onClick={() => showSection('library', libraryRef)}>
           <Library size={15} strokeWidth={1.7} aria-hidden='true' /><span>Library</span>
@@ -55,7 +48,14 @@ export default function Sidebar({
         </button>
       </div>
 
-      <h2 className='sidebar-eyebrow' id='library-heading' ref={libraryRef}>Documents ({documents.length})</h2>
+      <div className='sidebar-eyebrow-row'>
+        <h2 className='sidebar-eyebrow' id='library-heading' ref={libraryRef}>Documents ({documents.length})</h2>
+        {onManageDocuments && (
+          <button type='button' className='add-document' aria-label='Add a document' title='Add a document' onClick={onManageDocuments}>
+            <Plus size={13} strokeWidth={2} aria-hidden='true' />
+          </button>
+        )}
+      </div>
 
       <div className='document-list' role='group' aria-labelledby='library-heading'>
         {documents.length === 0 && <p className='sidebar-empty'>No documents yet.</p>}
