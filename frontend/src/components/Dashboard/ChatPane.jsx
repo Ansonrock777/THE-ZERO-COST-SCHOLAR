@@ -29,16 +29,28 @@ export default function ChatPane({
   onRemoveDocument,
   onStageChange,
   onAttach,
+  onClearSelectedText,
 }) {
   const [messages, setMessages] = useState(initialMessages)
   const [question, setQuestion] = useState('')
   const [stage, setStage] = useState('')
   const [error, setError] = useState('')
   const abortRef = useRef(null)
+  const requestIdRef = useRef(0)
+  const requestConversationIdRef = useRef(undefined)
   const lastQuestion = useRef('')
   const listRef = useRef(null)
 
   useEffect(() => { setMessages(initialMessages) }, [initialMessages, conversationId])
+  useEffect(() => {
+    if (requestConversationIdRef.current === undefined || requestConversationIdRef.current === conversationId) return undefined
+    requestIdRef.current += 1
+    abortRef.current?.abort()
+    abortRef.current = null
+    requestConversationIdRef.current = undefined
+    setStage('')
+    return undefined
+  }, [conversationId])
   useEffect(() => { onStageChange?.(stage ? STAGE_LABELS[stage] || stage : '') }, [stage, onStageChange])
   // `scrollTo` is optional: jsdom (and older engines) do not implement it.
   useEffect(() => { listRef.current?.scrollTo?.({ top: listRef.current.scrollHeight, behavior: 'smooth' }) }, [messages, stage])
@@ -48,16 +60,20 @@ export default function ChatPane({
     if (!clean || !documentIds.length || stage) return
     const controller = new AbortController()
     abortRef.current = controller
-    lastQuestion.current = clean
+    const requestId = ++requestIdRef.current
+    const queryText = selectedPdfText ? `Regarding this selected passage:\n“${selectedPdfText}”\n\n${clean}` : clean
+    lastQuestion.current = queryText
     setQuestion('')
     setError('')
-    setMessages(current => [...current, { role: 'user', content: clean, created_at: new Date().toISOString() }])
+    setMessages(current => [...current, { role: 'user', content: queryText, created_at: new Date().toISOString() }])
     setStage('validating')
     try {
-      const activeConversationId = conversationId || await onEnsureConversation?.()
-      await streamQuery({ question: clean, document_ids: documentIds, conversation_id: activeConversationId || undefined, answer_style: answerStyle }, {
+      const activeConversationId = conversationId || await onEnsureConversation?.(clean)
+      requestConversationIdRef.current = activeConversationId
+      await streamQuery({ question: queryText, document_ids: documentIds, conversation_id: activeConversationId || undefined, answer_style: answerStyle }, {
         signal: controller.signal,
         onEvent: event => {
+          if (requestId !== requestIdRef.current || controller.signal.aborted) return
           if (event.type === 'status') setStage(event.stage)
           if (event.type === 'error') throw new Error(event.detail)
           if (event.type === 'result') {
@@ -73,6 +89,7 @@ export default function ChatPane({
         },
       })
     } catch (requestError) {
+      if (requestId !== requestIdRef.current) return
       setStage('')
       if (requestError.name !== 'AbortError') setError(requestError.message || 'The query failed.')
     }
@@ -162,10 +179,15 @@ export default function ChatPane({
         {error && <p className='workspace-error' role='alert'>{error}</p>}
       </div>
 
-      <form className='composer' onSubmit={event => { event.preventDefault(); ask(contextualPrompt + question) }}>
+      <form className='composer' onSubmit={event => { event.preventDefault(); ask(question) }}>
         {selectedPdfText && (
           <>
-            <span className='kicker'>Selected text to ask about</span>
+            <div className='selection-context-header'>
+              <span className='kicker'>Selected text to ask about</span>
+              <button type='button' className='selection-context-close' aria-label='Clear selected text' onClick={onClearSelectedText}>
+                <X size={14} strokeWidth={1.8} aria-hidden='true' />
+              </button>
+            </div>
             <p className='selection-context'>{selectedPdfText}</p>
           </>
         )}
@@ -180,7 +202,7 @@ export default function ChatPane({
           onKeyDown={event => {
             if (event.key === 'Enter' && !event.shiftKey) {
               event.preventDefault()
-              ask(contextualPrompt + question)
+              ask(question)
             }
           }}
           disabled={!documentIds.length}

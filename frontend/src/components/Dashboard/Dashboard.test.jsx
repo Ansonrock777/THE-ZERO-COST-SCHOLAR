@@ -4,13 +4,14 @@ import api from '../../lib/apiClient'
 import Dashboard from './Dashboard'
 
 vi.mock('../../lib/apiClient', () => ({ default: { get: vi.fn(), post: vi.fn(), patch: vi.fn(), delete: vi.fn() } }))
-vi.mock('./PdfViewer', () => ({ default: ({ document, citation }) => (
-  <div data-testid='mock-pdf'>PDF: {document?.filename || 'none'} {citation ? `citation-page:${citation.page}` : ''}</div>
+vi.mock('./PdfViewerPane', () => ({ default: ({ selectedDocument, activeCitation }) => (
+  <div data-testid='mock-pdf'>PDF: {selectedDocument?.filename || 'none'} {activeCitation ? `citation-page:${activeCitation.page}` : ''}</div>
 ) }))
-vi.mock('./ChatPane', () => ({ default: ({ documentIds, summary, onCitationClick }) => (
+vi.mock('./ChatPane', () => ({ default: ({ documentIds, summary, onCitationClick, onEnsureConversation }) => (
   <div>
     <span>Chat with {documentIds.join(',')} {summary}</span>
     <button onClick={() => onCitationClick({ document_id: 'doc-a', page: 7, text: 'Citable source' })}>Cite</button>
+    <button onClick={() => onEnsureConversation('First research question')}>Send first query</button>
   </div>
 ) }))
 vi.mock('./UploadPanel', () => ({ default: () => <button>Upload PDF</button> }))
@@ -42,6 +43,28 @@ describe('Dashboard production workspace', () => {
     fireEvent.click((await screen.findByText('Prior inquiry')).closest('button'))
     await waitFor(() => expect(api.get).toHaveBeenCalledWith('/conversations/chat-a/messages'))
     expect(screen.getByText(/chat with doc-b/i)).toBeInTheDocument()
+  })
+
+  it('keeps the selected document when the first query creates a chat', async () => {
+    api.post.mockResolvedValue({
+      data: { id: 'chat-new', title: '', document_ids: ['doc-a'], pinned: false },
+    })
+    render(<Dashboard />)
+    await screen.findByText(/chat with doc-a/i)
+
+    fireEvent.click(screen.getByRole('button', { name: 'New chat' }))
+    expect(screen.getByText(/^Chat with\s*$/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('checkbox', { name: 'archive.pdf' }))
+    expect(screen.getByText(/chat with doc-a/i)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Send first query' }))
+
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/conversations', {
+      document_ids: ['doc-a'],
+      title: 'First research question',
+    }))
+    expect(screen.getByText(/chat with doc-a/i)).toBeInTheDocument()
+    expect(screen.getByText('First research question')).toBeInTheDocument()
   })
 
   it('clicking a citation hands its page to the PDF pane', async () => {

@@ -16,8 +16,8 @@ vi.mock('react-pdf', () => ({
     }, [file, onLoadSuccess])
     return <div data-testid='mock-document'>{children}</div>
   },
-  Page: ({ pageNumber, children }) => (
-    <div data-testid='mock-page'>
+  Page: ({ pageNumber, children, inputRef }) => (
+    <div ref={inputRef} data-testid='mock-page'>
       {`rendered-page-${pageNumber}`}
       {children}
     </div>
@@ -30,6 +30,7 @@ import PdfViewerPane from './PdfViewerPane'
 afterEach(() => {
   cleanup()
   vi.clearAllMocks()
+  vi.restoreAllMocks()
 })
 
 const doc = { document_id: 'doc-1', filename: 'guide.pdf' }
@@ -79,6 +80,53 @@ describe('PdfViewerPane', () => {
     expect(screen.getByText('rendered-page-1')).toBeInTheDocument()
   })
 
+  it('renders every PDF page in a scrollable document', () => {
+    mockUsePdfDocument.mockReturnValue({ bytes: new Uint8Array([1]), loading: false, error: '', notFound: false, refetch: vi.fn() })
+
+    render(<PdfViewerPane selectedDocument={doc} activeCitation={null} onClose={vi.fn()} />)
+
+    expect(screen.getAllByTestId('mock-page')).toHaveLength(5)
+    expect(screen.getByText('rendered-page-5')).toBeInTheDocument()
+  })
+
+  it('removes the document outline control to make room for document navigation', () => {
+    mockUsePdfDocument.mockReturnValue({ bytes: new Uint8Array([1]), loading: false, error: '', notFound: false, refetch: vi.fn() })
+
+    render(<PdfViewerPane selectedDocument={doc} activeCitation={null} onClose={vi.fn()} />)
+
+    expect(screen.queryByRole('button', { name: 'Document outline' })).not.toBeInTheDocument()
+  })
+
+  it('toggles document search in the top toolbar and removes the bottom toolbar', () => {
+    mockUsePdfDocument.mockReturnValue({ bytes: new Uint8Array([1]), loading: false, error: '', notFound: false, refetch: vi.fn() })
+
+    render(<PdfViewerPane selectedDocument={doc} activeCitation={null} onClose={vi.fn()} />)
+
+    expect(screen.queryByPlaceholderText('Search in document')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Pages')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Comments')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Tags')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Download PDF')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Search document' }))
+    expect(screen.getByPlaceholderText('Search in document')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close document search' }))
+    expect(screen.queryByPlaceholderText('Search in document')).not.toBeInTheDocument()
+  })
+
+  it('reports selected PDF text without disabling native text selection', () => {
+    const onTextSelection = vi.fn()
+    mockUsePdfDocument.mockReturnValue({ bytes: new Uint8Array([1]), loading: false, error: '', notFound: false, refetch: vi.fn() })
+    vi.spyOn(window, 'getSelection').mockReturnValue({ toString: () => 'selected passage' })
+
+    render(<PdfViewerPane selectedDocument={doc} activeCitation={null} onClose={vi.fn()} onTextSelection={onTextSelection} />)
+    fireEvent.mouseUp(screen.getAllByTestId('mock-page')[0])
+
+    expect(onTextSelection).toHaveBeenCalledWith('selected passage')
+    expect(screen.getAllByTestId('mock-page')[0].className).not.toContain('select-none')
+  })
+
   it('reload resets to page 1 and 100% zoom, and refetches', () => {
     const refetch = vi.fn()
     mockUsePdfDocument.mockReturnValue({ bytes: new Uint8Array([1]), loading: false, error: '', notFound: false, refetch })
@@ -105,6 +153,19 @@ describe('PdfViewerPane', () => {
     expect(screen.getByLabelText('Previous page')).not.toBeDisabled()
   })
 
+  it('scrolls the selected page into view when the page slider changes', () => {
+    const scrollTo = vi.fn()
+    Object.defineProperty(HTMLElement.prototype, 'scrollTo', { configurable: true, value: scrollTo })
+    mockUsePdfDocument.mockReturnValue({ bytes: new Uint8Array([1]), loading: false, error: '', notFound: false, refetch: vi.fn() })
+
+    render(<PdfViewerPane selectedDocument={doc} activeCitation={null} onClose={vi.fn()} />)
+
+    fireEvent.change(screen.getByLabelText('Page slider'), { target: { value: '4' } })
+
+    expect(screen.getByText('4 / 5')).toBeInTheDocument()
+    expect(scrollTo).toHaveBeenCalled()
+  })
+
   it('jumps to the cited page when activeCitation changes', () => {
     mockUsePdfDocument.mockReturnValue({ bytes: new Uint8Array([1]), loading: false, error: '', notFound: false, refetch: vi.fn() })
 
@@ -123,30 +184,20 @@ describe('PdfViewerPane', () => {
     expect(screen.getByText('3 / 5')).toBeInTheDocument()
   })
 
-  it('disables download with no bytes, and downloads once bytes are present', () => {
-    mockUsePdfDocument.mockReturnValue({ bytes: null, loading: false, error: '', notFound: false, refetch: vi.fn() })
-    const { rerender } = render(<PdfViewerPane selectedDocument={doc} activeCitation={null} onClose={vi.fn()} />)
-    expect(screen.getByLabelText('Download PDF')).toBeDisabled()
-
-    global.URL.createObjectURL = vi.fn(() => 'blob:mock-url')
-    global.URL.revokeObjectURL = vi.fn()
-    mockUsePdfDocument.mockReturnValue({
-      bytes: new Uint8Array([1, 2, 3]), loading: false, error: '', notFound: false, refetch: vi.fn(),
-    })
-    rerender(<PdfViewerPane selectedDocument={doc} activeCitation={null} onClose={vi.fn()} />)
-
-    fireEvent.click(screen.getByLabelText('Download PDF'))
-    expect(global.URL.createObjectURL).toHaveBeenCalledTimes(1)
-    expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('blob:mock-url')
-  })
-
-  it('calls onClose from the mobile back button', () => {
-    const onClose = vi.fn()
+  it('navigates between documents from the PDF header', () => {
+    const onSelectDocument = vi.fn()
     mockUsePdfDocument.mockReturnValue({ bytes: null, loading: false, error: '', notFound: false, refetch: vi.fn() })
 
-    render(<PdfViewerPane selectedDocument={null} activeCitation={null} onClose={onClose} />)
+    const documents = [
+      { document_id: 'doc-1', filename: 'one.pdf' },
+      { document_id: 'doc-2', filename: 'two.pdf' },
+      { document_id: 'doc-3', filename: 'three.pdf' },
+    ]
+    render(<PdfViewerPane selectedDocument={documents[1]} documents={documents} onSelectDocument={onSelectDocument} />)
 
-    fireEvent.click(screen.getByLabelText('Close PDF viewer'))
-    expect(onClose).toHaveBeenCalledTimes(1)
+    fireEvent.click(screen.getByLabelText('Previous document'))
+    fireEvent.click(screen.getByLabelText('Next document'))
+    expect(onSelectDocument).toHaveBeenNthCalledWith(1, 'doc-1')
+    expect(onSelectDocument).toHaveBeenNthCalledWith(2, 'doc-3')
   })
 })

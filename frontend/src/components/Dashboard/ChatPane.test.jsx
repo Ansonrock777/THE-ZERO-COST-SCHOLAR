@@ -8,13 +8,22 @@ import ChatPane from './ChatPane'
 afterEach(() => { cleanup(); vi.clearAllMocks() })
 
 describe('ChatPane', () => {
+  it('clears selected text when the dismiss button is activated', () => {
+    const clearSelectedText = vi.fn()
+    render(<ChatPane documentIds={['doc-1']} selectedPdfText='chosen evidence' onClearSelectedText={clearSelectedText} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear selected text' }))
+
+    expect(clearSelectedText).toHaveBeenCalledTimes(1)
+  })
+
   it('creates a conversation, includes selected text, and renders the result', async () => {
     const ensure = vi.fn().mockResolvedValue('conversation-1')
     render(<ChatPane documentIds={['doc-1']} selectedPdfText='chosen evidence' onEnsureConversation={ensure} />)
     fireEvent.change(screen.getByLabelText('Ask a question'), { target: { value: 'What does it mean?' } })
     fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
     expect(await screen.findByText('Grounded')).toBeInTheDocument()
-    expect(ensure).toHaveBeenCalled()
+    expect(ensure).toHaveBeenCalledWith('What does it mean?')
     expect(streamQuery.mock.calls[0][0]).toMatchObject({ document_ids: ['doc-1'], conversation_id: 'conversation-1' })
     expect(streamQuery.mock.calls[0][0].question).toContain('chosen evidence')
   })

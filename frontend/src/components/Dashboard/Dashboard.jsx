@@ -10,7 +10,7 @@ import SettingsPanel from './SettingsPanel'
 import AppShell from '../Workspace/AppShell'
 import { loadWorkspacePreferences, saveWorkspacePreferences, toggleSelection } from '../Workspace/workspaceState'
 
-const PdfViewer = lazy(() => import('./PdfViewer'))
+const PdfViewer = lazy(() => import('./PdfViewerPane'))
 
 const DEFAULT_SETTINGS = { citationPlacement: 'inline', answerStyle: 'balanced' }
 
@@ -33,6 +33,7 @@ export default function Dashboard({ user, onSignOut }) {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [manageOpen, setManageOpen] = useState(false)
   const [settings, setSettings] = useState(loadSettings)
+  const [activeDocumentId, setActiveDocumentId] = useState(null)
   // Retrieval stage, surfaced by the chat pane so the top bar can report it.
   const [stage, setStage] = useState('')
 
@@ -57,7 +58,9 @@ export default function Dashboard({ user, onSignOut }) {
         setPreferences(current => {
           const available = new Set(savedDocuments.map(document => document.document_id))
           const restored = current.selectedDocumentIds.filter(id => available.has(id))
-          return { ...current, selectedDocumentIds: restored.length ? restored : savedDocuments[0] ? [savedDocuments[0].document_id] : [] }
+          const selected = restored.length ? restored : savedDocuments[0] ? [savedDocuments[0].document_id] : []
+          setActiveDocumentId(selected[0] || null)
+          return { ...current, selectedDocumentIds: selected }
         })
       } catch {
         if (active) setError('Unable to load your workspace. Refresh to try again.')
@@ -83,19 +86,35 @@ export default function Dashboard({ user, onSignOut }) {
   }
 
   const selectedDocuments = documents.filter(document => preferences.selectedDocumentIds.includes(document.document_id))
-  const activeDocument = selectedDocuments[0] ?? null
+  const activeDocument = documents.find(document => document.document_id === activeDocumentId) || selectedDocuments[0] || null
 
-  const newConversation = async () => {
-    if (!preferences.selectedDocumentIds.length) return null
-    const { data } = await api.post('/conversations', {
-      document_ids: preferences.selectedDocumentIds,
-      title: 'New inquiry',
-    })
-    setConversations(current => [data, ...current])
+  const newConversation = () => {
     setMessages([])
     setActiveCitation(null)
-    setPreferences(current => ({ ...current, conversationId: data.id }))
-    return data.id
+    setActiveDocumentId(null)
+    setPreferences(current => ({ ...current, conversationId: null, selectedDocumentIds: [] }))
+    return null
+  }
+
+  const ensureConversation = async (question) => {
+    const documentIds = preferences.selectedDocumentIds
+    if (!documentIds.length) return null
+    const title = question.trim().slice(0, 48) || 'New inquiry'
+    const now = new Date().toISOString()
+    const { data } = await api.post('/conversations', {
+      document_ids: documentIds,
+      title,
+    })
+    const conversation = {
+      ...data,
+      title: data.title?.trim() || title,
+      document_ids: data.document_ids || documentIds,
+      created_at: data.created_at || now,
+      updated_at: data.updated_at || now,
+    }
+    setConversations(current => [conversation, ...current.filter(item => item.id !== conversation.id)])
+    setPreferences(current => ({ ...current, conversationId: conversation.id, selectedDocumentIds: documentIds }))
+    return conversation.id
   }
 
   const selectConversation = async (id) => {
@@ -145,6 +164,7 @@ export default function Dashboard({ user, onSignOut }) {
     if (!citation) return
     const citedDocument = documents.find(document => document.document_id === citation.document_id)
     if (citedDocument) {
+      setActiveDocumentId(citedDocument.document_id)
       setPreferences(current => ({ ...current, mobilePane: 'pdf' }))
       setActiveCitation(citation)
     }
@@ -164,10 +184,11 @@ export default function Dashboard({ user, onSignOut }) {
         onMobilePaneChange={mobilePane => setPreferences(current => ({ ...current, mobilePane }))}
         onThemeChange={theme => setPreferences(current => ({ ...current, theme }))}
         onSelectConversation={selectConversation}
+        onSelectDocument={id => setActiveDocumentId(id)}
         onPinConversation={pinConversation}
         onDeleteConversation={deleteConversation}
-        onExportConversation={exportConversation}
         onRenameConversation={renameConversation}
+        onNewConversation={newConversation}
         onManageDocuments={() => setManageOpen(true)}
         onOpenSettings={() => setSettingsOpen(true)}
         user={user}
@@ -188,24 +209,27 @@ export default function Dashboard({ user, onSignOut }) {
               documentIds={preferences.selectedDocumentIds}
               documents={selectedDocuments}
               conversationId={preferences.conversationId}
+              onEnsureConversation={ensureConversation}
               initialMessages={messages}
               selectedPdfText={selectedPdfText}
               citationPlacement={settings.citationPlacement}
               answerStyle={settings.answerStyle}
               summary={activeDocument?.summary}
-              onEnsureConversation={newConversation}
               onCitationClick={openCitation}
               onRemoveDocument={toggleDocument}
               onStageChange={setStage}
+              onClearSelectedText={() => setSelectedPdfText('')}
             />
           )}
         </div>
         <Suspense fallback={<div className='pdf-empty'><p>Opening reader…</p></div>}>
           <PdfViewer
-            document={documents.find(document => document.document_id === activeCitation?.document_id) || activeDocument}
-            citation={activeCitation}
+            selectedDocument={documents.find(document => document.document_id === activeCitation?.document_id) || activeDocument}
+            documents={documents}
+            onSelectDocument={setActiveDocumentId}
+            activeCitation={activeCitation}
             onTextSelection={setSelectedPdfText}
-            onBack={activeCitation ? () => setActiveCitation(null) : undefined}
+            onClose={activeCitation ? () => setActiveCitation(null) : undefined}
           />
         </Suspense>
       </AppShell>

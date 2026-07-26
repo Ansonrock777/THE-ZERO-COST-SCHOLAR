@@ -42,10 +42,9 @@ function relativeRect(rect, containerRect) {
  * `containerRect` — the bounding rect of the positioned element rects should
  * be made relative to (read in the same tick as `rects` to avoid drift).
  *
- * Mirrors react-pdf's own item→span correlation rule exactly: an item only
- * gets a span if it has `str`, and consumes TWO DOM children (the span plus
- * a trailing line-break marker) when `item.hasEOL` is also true — get this
- * wrong and every highlight after the first wrapped line silently drifts.
+ * `rects` contains presentation spans only, so every text item consumes
+ * exactly one rect. End-of-line markers are not included by the caller's
+ * `[role="presentation"]` query.
  */
 export function buildPageTextIndex(items, rects, containerRect) {
   let domIndex = 0
@@ -56,7 +55,7 @@ export function buildPageTextIndex(items, rects, containerRect) {
     if (!('str' in item)) continue // marked content — no DOM span rendered
 
     const rect = rects[domIndex]
-    domIndex += item.str && item.hasEOL ? 2 : 1
+    domIndex += 1
 
     const normalized = normalize(item.str)
     if (!normalized || !rect) continue

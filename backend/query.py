@@ -77,7 +77,7 @@ def _open_vectorstore(collection_name: str):
 
 def _load_document_bm25(collection_name: str) -> BM25Index:
     path = index_path_for_collection(collection_name, BM25_INDEX_PATH)
-    return load_bm25_index(path)
+    return load_bm25_index(path, allow_missing=True)
 
 
 def _generate(messages: list[dict[str, str]]) -> tuple[str, str]:

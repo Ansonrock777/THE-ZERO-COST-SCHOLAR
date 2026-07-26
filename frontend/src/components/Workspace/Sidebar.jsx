@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import { BookOpen, Check, ChevronLeft, Clock, FileText, Library, Plus, Search } from 'lucide-react'
+import { useState } from 'react'
+import { BookOpen, Check, ChevronLeft, FileText, Plus, Search, SquarePen } from 'lucide-react'
 import HistoryList from './HistoryList'
 
 export default function Sidebar({
@@ -10,24 +10,17 @@ export default function Sidebar({
   selectedDocumentIds = [],
   activeConversationId,
   onToggleDocument,
+  onSelectDocument,
   onSelectConversation,
   onPinConversation,
   onDeleteConversation,
-  onExportConversation,
   onRenameConversation,
+  onNewConversation,
   onManageDocuments,
 }) {
   // The two rails mark the sidebar's regions rather than routing anywhere —
   // both lists stay on screen, so selecting one scrolls it into view.
-  const [section, setSection] = useState('library')
   const [search, setSearch] = useState('')
-  const libraryRef = useRef(null)
-  const historyRef = useRef(null)
-
-  const showSection = (name, ref) => {
-    setSection(name)
-    ref.current?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' })
-  }
 
   return (
     <nav className='workspace-sidebar' aria-label='Workspace navigation' data-collapsed={collapsed}>
@@ -40,16 +33,13 @@ export default function Sidebar({
       </div>
 
       <div className='sidebar-nav'>
-        <button type='button' className='sidebar-nav-item' aria-current={section === 'library'} onClick={() => showSection('library', libraryRef)}>
-          <Library size={15} strokeWidth={1.7} aria-hidden='true' /><span>Library</span>
-        </button>
-        <button type='button' className='sidebar-nav-item' aria-current={section === 'history'} onClick={() => showSection('history', historyRef)}>
-          <Clock size={15} strokeWidth={1.7} aria-hidden='true' /><span>History</span>
+        <button type='button' className='sidebar-nav-item' onClick={() => onNewConversation?.()}>
+          <SquarePen size={15} strokeWidth={1.7} aria-hidden='true' /><span>New chat</span>
         </button>
       </div>
 
       <div className='sidebar-eyebrow-row'>
-        <h2 className='sidebar-eyebrow' id='library-heading' ref={libraryRef}>Documents ({documents.length})</h2>
+        <h2 className='sidebar-eyebrow' id='library-heading'>Documents ({documents.length})</h2>
         {onManageDocuments && (
           <button type='button' className='add-document' aria-label='Add a document' title='Add a document' onClick={onManageDocuments}>
             <Plus size={13} strokeWidth={2} aria-hidden='true' />
@@ -74,7 +64,12 @@ export default function Sidebar({
                 aria-label={document.filename}
               />
               <FileText size={14} strokeWidth={1.6} aria-hidden='true' />
-              <span title={document.filename}>{document.filename}</span>
+              <button
+                type='button'
+                className='document-name-button'
+                title={`View ${document.filename}`}
+                onClick={event => { event.preventDefault(); onSelectDocument?.(document.document_id) }}
+              >{document.filename}</button>
               <span className='document-check' aria-hidden='true'>
                 {selected && <Check size={10} strokeWidth={3.2} />}
               </span>
@@ -102,14 +97,12 @@ export default function Sidebar({
       </div>
 
       <HistoryList
-        ref={historyRef}
         conversations={conversations}
         search={search}
         activeId={activeConversationId}
         onSelect={onSelectConversation}
         onPin={onPinConversation}
         onDelete={onDeleteConversation}
-        onExport={onExportConversation}
         onRename={onRenameConversation}
       />
     </nav>

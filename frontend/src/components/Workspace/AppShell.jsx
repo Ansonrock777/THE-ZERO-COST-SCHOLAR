@@ -19,13 +19,14 @@ export default function AppShell({
   status = '',
   user,
   onToggleDocument,
+  onSelectDocument,
   onMobilePaneChange,
   onThemeChange,
   onSelectConversation,
   onPinConversation,
   onDeleteConversation,
-  onExportConversation,
   onRenameConversation,
+  onNewConversation,
   onManageDocuments,
   onOpenSettings,
   onSignOut,
@@ -68,7 +69,7 @@ export default function AppShell({
   }
 
   return (
-    <div className='scholar-app' data-theme={theme}>
+    <div className='scholar-app' data-theme={theme} data-sidebar-collapsed={collapsed}>
       <Sidebar
         collapsed={collapsed}
         onCollapse={() => setCollapsed(value => !value)}
@@ -77,11 +78,12 @@ export default function AppShell({
         selectedDocumentIds={selectedDocumentIds}
         activeConversationId={activeConversationId}
         onToggleDocument={onToggleDocument}
+        onSelectDocument={onSelectDocument}
         onSelectConversation={onSelectConversation}
         onPinConversation={onPinConversation}
         onDeleteConversation={onDeleteConversation}
-        onExportConversation={onExportConversation}
         onRenameConversation={onRenameConversation}
+        onNewConversation={onNewConversation}
         onManageDocuments={onManageDocuments}
       />
 

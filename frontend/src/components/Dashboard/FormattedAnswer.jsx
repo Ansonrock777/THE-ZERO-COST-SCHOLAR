@@ -1,4 +1,4 @@
-const CITATION_RE = /\[Source\s+(\d+)\]|【(\d+)】/gu
+const CITATION_RE = /\[Source\s+(\d+)\]|\u3010(?:Source\s+)?(\d+)\u3011/gu
 
 function renderInline(text, keyPrefix, sources, onCitationClick) {
   const boldParts = text.split(/(\*\*[^*]+\*\*)/g)

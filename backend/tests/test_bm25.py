@@ -8,6 +8,14 @@ from bm25 import (
 )
 
 
+def test_missing_index_is_treated_as_empty_index(tmp_path):
+    missing_path = tmp_path / "missing.json"
+
+    restored = load_bm25_index(missing_path, allow_missing=True)
+
+    assert restored.documents == ()
+
+
 def chunk(document_id, chunk_index, text, page=0):
     return BM25Document(
         document_id=document_id,

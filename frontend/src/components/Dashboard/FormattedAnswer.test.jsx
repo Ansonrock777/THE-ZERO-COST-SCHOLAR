@@ -17,6 +17,11 @@ describe('FormattedAnswer citations', () => {
     expect(stripMarkdown('Answer 【3】')).toBe('Answer')
   })
 
+  it('renders full Unicode source labels as clickable citations', () => {
+    render(<FormattedAnswer text='Answer 【Source 3】' />)
+    expect(screen.getByRole('button', { name: /open citation 3/i })).toBeInTheDocument()
+  })
+
   it('opens the source attached to a citation', () => {
     const onCitationClick = vi.fn()
     const source = { filename: 'paper.pdf', page: 4 }

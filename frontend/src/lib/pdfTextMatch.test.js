@@ -13,17 +13,16 @@ describe('normalize', () => {
 })
 
 describe('buildPageTextIndex', () => {
-  it('correlates items to DOM spans, stepping by 2 for hasEOL items and skipping marked content', () => {
+  it('keeps text items aligned with presentation spans after an end-of-line item', () => {
     const items = [
       { str: 'Hello', hasEOL: false },
-      { str: 'world', hasEOL: true }, // consumes its span + a trailing EOL marker (2 DOM children)
+      { str: 'world', hasEOL: true },
       { type: 'beginMarkedContent' }, // no 'str' — renders no span at all, must not shift the index
       { str: 'Second', hasEOL: false },
     ]
     const rects = [
       { top: 110, left: 60, width: 40, height: 12 }, // Hello
       { top: 110, left: 105, width: 45, height: 12 }, // world
-      { top: 999, left: 999, width: 0, height: 0 }, // world's EOL marker — must be skipped, never read
       { top: 130, left: 60, width: 50, height: 12 }, // Second
     ]
     const containerRect = { top: 100, left: 50 }

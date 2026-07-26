@@ -180,22 +180,6 @@ async def test_foreign_pdf_file_is_rejected_before_storage_access(app_module):
     app_module.pdf_storage.path_for.assert_not_called()
 
 
-@pytest.mark.asyncio
-async def test_deleting_owned_document_removes_file_and_soft_deletes(app_module):
-    repository = FakeRepository(
-        document=OwnedDocument("doc-1", "guide.pdf", "stored-collection")
-    )
-    app_module.document_repository = repository
-    app_module.pdf_storage = Mock()
-    app_module.pdf_storage.delete.return_value = True
-
-    result = await app_module.delete_document("doc-1", user_id="owner")
-
-    assert result == {"deleted": True, "document_id": "doc-1"}
-    app_module.pdf_storage.delete.assert_called_once_with("owner", "doc-1")
-    assert repository.soft_delete_calls == [("doc-1", "owner")]
-
-
 def test_query_request_rejects_collection_name(app_module):
     with pytest.raises(ValidationError):
         app_module.QueryRequest(

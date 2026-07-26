@@ -1,5 +1,5 @@
 import { forwardRef, useMemo } from 'react'
-import { Download, Pencil, Pin, Trash2 } from 'lucide-react'
+import { Pencil, Pin, Trash2 } from 'lucide-react'
 
 const DAY = 24 * 60 * 60 * 1000
 
@@ -62,7 +62,6 @@ const HistoryList = forwardRef(function HistoryList({
   onSelect,
   onPin,
   onDelete,
-  onExport,
   onRename,
 }, ref) {
   const groups = useMemo(() => {
@@ -92,7 +91,6 @@ const HistoryList = forwardRef(function HistoryList({
                 <div className='history-actions'>
                   <button type='button' aria-label={`Pin ${title}`} onClick={() => onPin?.(conversation)}><Pin size={13} strokeWidth={1.7} /></button>
                   <button type='button' aria-label={`Rename ${title}`} onClick={() => onRename?.(conversation)}><Pencil size={13} strokeWidth={1.7} /></button>
-                  <button type='button' aria-label={`Export ${title}`} onClick={() => onExport?.(conversation)}><Download size={13} strokeWidth={1.7} /></button>
                   <button type='button' aria-label={`Delete ${title}`} onClick={() => onDelete?.(conversation)}><Trash2 size={13} strokeWidth={1.7} /></button>
                 </div>
               </div>

@@ -126,8 +126,13 @@ def save_bm25_index(index: BM25Index, path: str | Path) -> None:
     os.replace(temporary, destination)
 
 
-def load_bm25_index(path: str | Path) -> BM25Index:
-    value = json.loads(Path(path).read_text(encoding="utf-8"))
+def load_bm25_index(path: str | Path, *, allow_missing: bool = False) -> BM25Index:
+    try:
+        value = json.loads(Path(path).read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        if not allow_missing:
+            raise
+        return BM25Index.from_documents([])
     return BM25Index.from_dict(value)
 
 
