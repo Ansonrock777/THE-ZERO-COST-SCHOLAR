@@ -1,0 +1,94 @@
+- generic [ref=f5e3]:
+  - navigation "Workspace navigation" [ref=f5e4]:
+    - generic [ref=f5e5]:
+      - strong [ref=f5e9]: The Zero-Cost Scholar
+      - button "Collapse navigation" [ref=f5e10] [cursor=pointer]
+    - button "New inquiry" [ref=f5e14] [cursor=pointer]
+    - generic [ref=f5e17]:
+      - button "Library" [ref=f5e18] [cursor=pointer]
+      - button "History" [ref=f5e22] [cursor=pointer]
+    - heading "Documents (4)" [level=2] [ref=f5e260]
+    - group "Documents (4)" [ref=f5e261]:
+      - generic [ref=f5e262] [cursor=pointer]:
+        - checkbox "final-verification.pdf" [checked]
+        - generic "final-verification.pdf" [ref=f5e266]
+      - generic [ref=f5e88] [cursor=pointer]:
+        - checkbox "indexing-smoke-test.pdf"
+        - generic "indexing-smoke-test.pdf" [ref=f5e92]
+      - generic [ref=f5e96] [cursor=pointer]:
+        - checkbox "Anson_Barretto_Resume (3).pdf"
+        - generic "Anson_Barretto_Resume (3).pdf" [ref=f5e100]
+      - generic [ref=f5e102] [cursor=pointer]:
+        - checkbox "Anson_Barretto_Resume (3).pdf"
+        - generic "Anson_Barretto_Resume (3).pdf" [ref=f5e106]
+    - button "Manage documents" [ref=f5e31] [cursor=pointer]
+    - generic [ref=f5e32]:
+      - searchbox "Search inquiries" [ref=f5e33]
+      - generic: ⌘K
+    - generic "Inquiry history" [ref=f5e34]:
+      - generic [ref=f5e108]:
+        - generic [ref=f5e109]: Today
+        - button "New inquiry 1:11 PM" [ref=f5e111] [cursor=pointer]:
+          - generic [ref=f5e112]: New inquiry
+          - generic [ref=f5e113]: 1:11 PM
+  - main [ref=f5e36]:
+    - generic [ref=f5e37]:
+      - strong [ref=f5e39]: Ask across 1 document
+      - generic [ref=f5e40]:
+        - button "Settings" [ref=f5e41] [cursor=pointer]
+        - group "Colour theme" [ref=f5e46]:
+          - button "Switch to light theme" [pressed] [ref=f5e47] [cursor=pointer]:
+            - generic [ref=f5e54]: Light
+          - button "Switch to dark theme" [ref=f5e55] [cursor=pointer]:
+            - generic [ref=f5e58]: Dark
+        - button "User menu" [ref=f5e60] [cursor=pointer]:
+          - generic [ref=f5e61]: A
+          - generic [ref=f5e62]: ansonmbarreto
+    - generic [ref=f5e65]:
+      - region "Chat workspace" [ref=f5e66]:
+        - generic [ref=f5e67]:
+          - alert [ref=f5e291]: The PDF is ready, but its automatic summary could not be generated.
+          - generic [ref=f5e114]:
+            - generic "Documents in scope" [ref=f5e115]:
+              - generic [ref=f5e270]:
+                - generic "final-verification.pdf" [ref=f5e274]
+                - button "Remove final-verification.pdf from this inquiry" [ref=f5e275] [cursor=pointer]
+            - generic [ref=f5e126]:
+              - generic [ref=f5e127]: New inquiry
+              - heading "What would you like to understand?" [level=1] [ref=f5e128]
+              - paragraph [ref=f5e129]: Answers combine semantic and BM25 retrieval, then link back to the original pages.
+            - generic [ref=f5e130]:
+              - textbox "Ask a question" [ref=f5e131]:
+                - /placeholder: Ask across the selected documents…
+              - generic [ref=f5e132]:
+                - generic [ref=f5e133]:
+                  - button "Attach a file" [disabled] [ref=f5e134]
+                  - button "Expand composer" [ref=f5e137] [cursor=pointer]
+                - button "Ask" [disabled] [ref=f5e143]
+      - separator "Resize chat and PDF panes" [ref=f5e82]
+      - region "PDF workspace" [ref=f5e83]:
+        - generic [ref=f5e147]:
+          - generic [ref=f5e148]:
+            - button "Back to the library" [disabled] [ref=f5e149]
+            - strong [ref=f5e152]: final-verification.pdf
+            - button "Document outline" [ref=f5e153] [cursor=pointer]
+            - button "More document actions" [ref=f5e155] [cursor=pointer]
+          - generic [ref=f5e160]:
+            - button "Toggle thumbnails" [ref=f5e161] [cursor=pointer]
+            - button "Find in document" [ref=f5e164] [cursor=pointer]
+            - button "Previous page" [disabled] [ref=f5e168]
+            - textbox "Page number" [ref=f5e171]: "1"
+            - generic [ref=f5e172]: / 29
+            - button "Next page" [ref=f5e173] [cursor=pointer]
+            - button "Zoom out" [ref=f5e177] [cursor=pointer]
+            - generic [ref=f5e179]: 105%
+            - button "Zoom in" [ref=f5e180] [cursor=pointer]
+            - button "Fit page" [ref=f5e182] [cursor=pointer]
+          - generic [ref=f5e188]: The Zero - Cost Scholar | Internship 2026 · Private & Confidential Page 1 Internship Training Program · 2026 THE ZERO - COST SCHOLAR A Full - Stack Private Document Intelligence Platform Build a privacy - first RAG application from scratch — no paid APIs, no data leaks Prepared by Jayden · For Ronan & Anson Version 2.0 · June 2026 🏗 React · FastAPI · Supabase · ChromaDB · OpenRouter · LangChain
+          - generic [ref=f5e194]:
+            - button "Page thumbnails" [ref=f5e195] [cursor=pointer]
+            - button "Passage notes" [ref=f5e199] [cursor=pointer]
+            - generic [ref=f5e202]: 0 highlights
+            - textbox "Search in document" [ref=f5e207]
+            - link "Download this document" [ref=f5e208] [cursor=pointer]:
+              - /url: blob:http://localhost:5173/602686a3-e6b6-4213-8391-8a8d51fdb107

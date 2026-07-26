@@ -1,0 +1,98 @@
+- generic [ref=f6e3]:
+  - navigation "Workspace navigation" [ref=f6e4]:
+    - generic [ref=f6e5]:
+      - strong [ref=f6e9]: The Zero-Cost Scholar
+      - button "Collapse navigation" [ref=f6e10] [cursor=pointer]
+    - button "New inquiry" [ref=f6e14] [cursor=pointer]
+    - generic [ref=f6e17]:
+      - button "Library" [ref=f6e18] [cursor=pointer]
+      - button "History" [ref=f6e22] [cursor=pointer]
+    - heading "Documents (5)" [level=2] [ref=f6e272]
+    - group "Documents (5)" [ref=f6e273]:
+      - generic [ref=f6e274] [cursor=pointer]:
+        - checkbox "summary-check.pdf" [checked]
+        - generic "summary-check.pdf" [ref=f6e278]
+      - generic [ref=f6e88] [cursor=pointer]:
+        - checkbox "final-verification.pdf"
+        - generic "final-verification.pdf" [ref=f6e92]
+      - generic [ref=f6e96] [cursor=pointer]:
+        - checkbox "indexing-smoke-test.pdf"
+        - generic "indexing-smoke-test.pdf" [ref=f6e100]
+      - generic [ref=f6e102] [cursor=pointer]:
+        - checkbox "Anson_Barretto_Resume (3).pdf"
+        - generic "Anson_Barretto_Resume (3).pdf" [ref=f6e106]
+      - generic [ref=f6e108] [cursor=pointer]:
+        - checkbox "Anson_Barretto_Resume (3).pdf"
+        - generic "Anson_Barretto_Resume (3).pdf" [ref=f6e112]
+    - button "Manage documents" [ref=f6e31] [cursor=pointer]
+    - generic [ref=f6e32]:
+      - searchbox "Search inquiries" [ref=f6e33]
+      - generic: ⌘K
+    - generic "Inquiry history" [ref=f6e34]:
+      - generic [ref=f6e114]:
+        - generic [ref=f6e115]: Today
+        - button "New inquiry 1:11 PM" [ref=f6e117] [cursor=pointer]:
+          - generic [ref=f6e118]: New inquiry
+          - generic [ref=f6e119]: 1:11 PM
+  - main [ref=f6e36]:
+    - generic [ref=f6e37]:
+      - strong [ref=f6e39]: Ask across 1 document
+      - generic [ref=f6e40]:
+        - button "Settings" [ref=f6e41] [cursor=pointer]
+        - group "Colour theme" [ref=f6e46]:
+          - button "Switch to light theme" [pressed] [ref=f6e47] [cursor=pointer]:
+            - generic [ref=f6e54]: Light
+          - button "Switch to dark theme" [ref=f6e55] [cursor=pointer]:
+            - generic [ref=f6e58]: Dark
+        - button "User menu" [ref=f6e60] [cursor=pointer]:
+          - generic [ref=f6e61]: A
+          - generic [ref=f6e62]: ansonmbarreto
+    - generic [ref=f6e65]:
+      - region "Chat workspace" [ref=f6e66]:
+        - generic [ref=f6e120]:
+          - generic "Documents in scope" [ref=f6e121]:
+            - generic [ref=f6e282]:
+              - generic "summary-check.pdf" [ref=f6e286]
+              - button "Remove summary-check.pdf from this inquiry" [ref=f6e287] [cursor=pointer]
+          - generic [ref=f6e132]:
+            - generic [ref=f6e133]: New inquiry
+            - heading "What would you like to understand?" [level=1] [ref=f6e134]
+            - paragraph [ref=f6e135]: Answers combine semantic and BM25 retrieval, then link back to the original pages.
+            - complementary [ref=f6e303]:
+              - strong [ref=f6e304]: Document overview
+              - paragraph [ref=f6e305]: The document explains the architecture for processing PDF documents. It begins by describing the ingestion step, where PyPDFLoader reads the PDF, and the RecursiveCharacterTextSplitter divides it into overlapping chunks of roughly 500 tokens so that no paragraph is split in half【Source 2 | Document 73e4f8a3-d865-44b1-beaa-0719c173a138 | Page 3 | Chunk 15】. Each chunk is then passed through the sentence‑transformers/all‑MiniLM‑L6‑v2 model, producing a 384‑dimensional float vector that captures the meaning of the text【Source 2 | Document 73e4f8a3-d865-44b1-beaa-0719c173a138 | Page 3 | Chunk 15】. Both the raw text and its vector are stored in ChromaDB under a collection keyed to the user’s document ID【Source 2 | Document 73e4f8a3-d865-44b1-beaa-0719c173a138 | Page 3 | Chunk 15】. The document also outlines that every request flows through five stages of the system architecture, emphasizing a structured, end‑to‑end pipeline for handling user documents【Source 3 | Document 73e4f8a3-d865-44b1-beaa-0719c173a138 | Page 3 | Chunk 10】. In sum, the document presents a concise, step‑by‑step workflow that ensures efficient ingestion, representation, and storage of PDF content.
+          - generic [ref=f6e136]:
+            - textbox "Ask a question" [ref=f6e137]:
+              - /placeholder: Ask across the selected documents…
+            - generic [ref=f6e138]:
+              - generic [ref=f6e139]:
+                - button "Attach a file" [disabled] [ref=f6e140]
+                - button "Expand composer" [ref=f6e143] [cursor=pointer]
+              - button "Ask" [disabled] [ref=f6e149]
+      - separator "Resize chat and PDF panes" [ref=f6e82]
+      - region "PDF workspace" [ref=f6e83]:
+        - generic [ref=f6e153]:
+          - generic [ref=f6e154]:
+            - button "Back to the library" [disabled] [ref=f6e155]
+            - strong [ref=f6e158]: summary-check.pdf
+            - button "Document outline" [ref=f6e159] [cursor=pointer]
+            - button "More document actions" [ref=f6e161] [cursor=pointer]
+          - generic [ref=f6e166]:
+            - button "Toggle thumbnails" [ref=f6e167] [cursor=pointer]
+            - button "Find in document" [ref=f6e170] [cursor=pointer]
+            - button "Previous page" [disabled] [ref=f6e174]
+            - textbox "Page number" [ref=f6e177]: "1"
+            - generic [ref=f6e178]: / 29
+            - button "Next page" [ref=f6e179] [cursor=pointer]
+            - button "Zoom out" [ref=f6e183] [cursor=pointer]
+            - generic [ref=f6e185]: 105%
+            - button "Zoom in" [ref=f6e186] [cursor=pointer]
+            - button "Fit page" [ref=f6e188] [cursor=pointer]
+          - generic [ref=f6e194]: The Zero - Cost Scholar | Internship 2026 · Private & Confidential Page 1 Internship Training Program · 2026 THE ZERO - COST SCHOLAR A Full - Stack Private Document Intelligence Platform Build a privacy - first RAG application from scratch — no paid APIs, no data leaks Prepared by Jayden · For Ronan & Anson Version 2.0 · June 2026 🏗 React · FastAPI · Supabase · ChromaDB · OpenRouter · LangChain
+          - generic [ref=f6e200]:
+            - button "Page thumbnails" [ref=f6e201] [cursor=pointer]
+            - button "Passage notes" [ref=f6e205] [cursor=pointer]
+            - generic [ref=f6e208]: 0 highlights
+            - textbox "Search in document" [ref=f6e213]
+            - link "Download this document" [ref=f6e214] [cursor=pointer]:
+              - /url: blob:http://localhost:5173/8c8c7c04-8863-4e93-a67f-ff776822261c

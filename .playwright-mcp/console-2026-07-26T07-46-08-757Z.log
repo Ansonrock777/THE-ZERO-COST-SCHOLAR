@@ -1,0 +1,7 @@
+[     294ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:17230
+[     392ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5173/@vite/client:524
+[     393ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5173/@vite/client:524
+[  374972ms] [WARNING] Warning: getTextContent - ignoring errors during "GetTextContent: page 2" task: "Error: Worker task was terminated". @ http://localhost:5173/@vite/client:524
+[  374972ms] [WARNING] Warning: getTextContent - ignoring errors during "GetTextContent: page 2" task: "Error: Worker task was terminated". @ http://localhost:5173/@vite/client:524
+[  375262ms] [WARNING] Warning: TT: undefined function: 32 @ http://localhost:5173/@vite/client:524
+[  375298ms] [WARNING] Warning: TT: undefined function: 32 @ http://localhost:5173/@vite/client:524

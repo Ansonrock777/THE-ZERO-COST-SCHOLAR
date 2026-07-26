@@ -1,0 +1,37 @@
+[     102ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:17230
+[     135ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5173/@vite/client:524
+[     136ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5173/@vite/client:524
+[     257ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ http://localhost:5173/login:0
+[   17863ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:54321/auth/v1/token?grant_type=password:0
+[   17863ms] [ERROR] TypeError: Failed to fetch
+    at http://localhost:5173/node_modules/.vite/deps/@supabase_supabase-js.js?v=13748585:12198:22
+    at _handleRequest (http://localhost:5173/node_modules/.vite/deps/@supabase_supabase-js.js?v=13748585:12479:18)
+    at _request (http://localhost:5173/node_modules/.vite/deps/@supabase_supabase-js.js?v=13748585:12466:21)
+    at SupabaseAuthClient.signInWithPassword (http://localhost:5173/node_modules/.vite/deps/@supabase_supabase-js.js?v=13748585:15646:17)
+    at handleLogin (http://localhost:5173/src/components/Auth/LoginPage.jsx:22:41)
+    at HTMLUnknownElement.callCallback (http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:3142:11)
+    at Object.invokeGuardedCallbackDev (http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:3162:14)
+    at invokeGuardedCallback (http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:3201:32)
+    at invokeGuardedCallbackAndCatchFirstError (http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:3214:26)
+    at executeDispatch (http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:6134:4) @ http://localhost:5173/@vite/client:524
+[   28528ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:54321/auth/v1/token?grant_type=password:0
+[   28528ms] [ERROR] TypeError: Failed to fetch
+    at http://localhost:5173/node_modules/.vite/deps/@supabase_supabase-js.js?v=13748585:12198:22
+    at _handleRequest (http://localhost:5173/node_modules/.vite/deps/@supabase_supabase-js.js?v=13748585:12479:18)
+    at _request (http://localhost:5173/node_modules/.vite/deps/@supabase_supabase-js.js?v=13748585:12466:21)
+    at SupabaseAuthClient.signInWithPassword (http://localhost:5173/node_modules/.vite/deps/@supabase_supabase-js.js?v=13748585:15646:17)
+    at handleLogin (http://localhost:5173/src/components/Auth/LoginPage.jsx:22:41)
+    at HTMLUnknownElement.callCallback (http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:3142:11)
+    at Object.invokeGuardedCallbackDev (http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:3162:14)
+    at invokeGuardedCallback (http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:3201:32)
+    at invokeGuardedCallbackAndCatchFirstError (http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:3214:26)
+    at executeDispatch (http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:6134:4) @ http://localhost:5173/@vite/client:524
+[  108728ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5173/@vite/client:992
+[  109780ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:17230
+[  109882ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5173/@vite/client:524
+[  109883ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5173/@vite/client:524
+[  109922ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ http://localhost:5173/login:0
+[  147798ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/documents:0
+[  147798ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/conversations:0
+[  147799ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/documents:0
+[  147812ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/conversations:0

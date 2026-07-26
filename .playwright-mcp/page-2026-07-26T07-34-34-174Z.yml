@@ -1,0 +1,50 @@
+- generic [ref=f1e3]:
+  - navigation "Workspace navigation" [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - strong [ref=f1e9]: The Zero-Cost Scholar
+      - button "Collapse navigation" [ref=f1e10] [cursor=pointer]
+    - button "New inquiry" [ref=f1e14] [cursor=pointer]
+    - generic [ref=f1e17]:
+      - button "Library" [ref=f1e18] [cursor=pointer]
+      - button "History" [ref=f1e22] [cursor=pointer]
+    - heading "Documents (0)" [level=2] [ref=f1e27]
+    - group "Documents (0)" [ref=f1e28]:
+      - paragraph [ref=f1e29]: No documents yet.
+    - button "Manage documents" [ref=f1e31] [cursor=pointer]
+    - generic [ref=f1e32]:
+      - searchbox "Search inquiries" [ref=f1e33]
+      - generic: ⌘K
+    - generic "Inquiry history" [ref=f1e34]:
+      - paragraph [ref=f1e35]: No matching inquiries.
+  - main [ref=f1e36]:
+    - generic [ref=f1e37]:
+      - strong [ref=f1e39]: Ask across 0 documents
+      - generic [ref=f1e40]:
+        - button "Settings" [ref=f1e41] [cursor=pointer]
+        - group "Colour theme" [ref=f1e46]:
+          - button "Switch to light theme" [pressed] [ref=f1e47] [cursor=pointer]:
+            - generic [ref=f1e54]: Light
+          - button "Switch to dark theme" [ref=f1e55] [cursor=pointer]:
+            - generic [ref=f1e58]: Dark
+        - button "User menu" [ref=f1e60] [cursor=pointer]:
+          - generic [ref=f1e61]: A
+          - generic [ref=f1e62]: ansonmbarreto
+    - generic [ref=f1e65]:
+      - region "Chat workspace" [ref=f1e66]:
+        - generic [ref=f1e67]:
+          - alert [ref=f1e68]: Unable to load your workspace. Refresh to try again.
+          - generic [ref=f1e69]:
+            - generic [ref=f1e70]: Evidence-grounded research
+            - heading "Read closely. Ask confidently." [level=1] [ref=f1e71]
+            - paragraph [ref=f1e72]: Upload a PDF to begin. Every answer stays connected to its evidence.
+            - generic [ref=f1e73]:
+              - heading "Add a document" [level=2] [ref=f1e74]
+              - button "Click to choose a PDF PDF files only" [active] [ref=f1e75] [cursor=pointer]:
+                - generic [ref=f1e80]: Click to choose a PDF
+                - generic [ref=f1e81]: PDF files only
+              - button "Choose a PDF to index" [ref=f1e82]
+      - separator "Resize chat and PDF panes" [ref=f1e83]
+      - region "PDF workspace" [ref=f1e84]:
+        - generic [ref=f1e85]:
+          - heading "Select a source" [level=2] [ref=f1e86]
+          - paragraph [ref=f1e87]: The original PDF and citation evidence will appear here.

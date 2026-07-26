@@ -1,0 +1,46 @@
+- generic [ref=f5e3]:
+  - navigation "Workspace navigation" [ref=f5e4]:
+    - generic [ref=f5e5]:
+      - strong [ref=f5e9]: The Zero-Cost Scholar
+      - button "Collapse navigation" [ref=f5e10] [cursor=pointer]
+    - button "New inquiry" [ref=f5e14] [cursor=pointer]
+    - generic [ref=f5e17]:
+      - button "Library" [ref=f5e18] [cursor=pointer]
+      - button "History" [ref=f5e22] [cursor=pointer]
+    - heading "Documents (0)" [level=2] [ref=f5e27]
+    - group "Documents (0)" [ref=f5e28]:
+      - paragraph [ref=f5e29]: No documents yet.
+    - button "Manage documents" [ref=f5e31] [cursor=pointer]
+    - generic [ref=f5e32]:
+      - searchbox "Search inquiries" [ref=f5e33]
+      - generic: ⌘K
+    - generic "Inquiry history" [ref=f5e34]:
+      - paragraph [ref=f5e35]: No matching inquiries.
+  - main [ref=f5e36]:
+    - generic [ref=f5e37]:
+      - strong [ref=f5e39]: Ask across 1 document
+      - generic [ref=f5e40]:
+        - button "Settings" [ref=f5e41] [cursor=pointer]
+        - group "Colour theme" [ref=f5e46]:
+          - button "Switch to light theme" [pressed] [ref=f5e47] [cursor=pointer]:
+            - generic [ref=f5e54]: Light
+          - button "Switch to dark theme" [ref=f5e55] [cursor=pointer]:
+            - generic [ref=f5e58]: Dark
+        - button "User menu" [ref=f5e60] [cursor=pointer]:
+          - generic [ref=f5e61]: A
+          - generic [ref=f5e62]: ansonmbarreto
+    - generic [ref=f5e65]:
+      - region "Chat workspace" [ref=f5e66]:
+        - generic [ref=f5e68]:
+          - generic [ref=f5e69]: Evidence-grounded research
+          - heading "Read closely. Ask confidently." [level=1] [ref=f5e70]
+          - paragraph [ref=f5e71]: Upload a PDF to begin. Every answer stays connected to its evidence.
+          - generic [ref=f5e72]:
+            - heading "Add a document" [level=2] [ref=f5e73]
+            - button "Click to choose a PDF PDF files only" [ref=f5e74] [cursor=pointer]:
+              - generic [ref=f5e79]: Click to choose a PDF
+              - generic [ref=f5e80]: PDF files only
+            - button "Choose a PDF to index" [ref=f5e81]
+      - separator "Resize chat and PDF panes" [ref=f5e82]
+      - region "PDF workspace" [ref=f5e83]:
+        - paragraph [ref=f5e85]: Opening reader…

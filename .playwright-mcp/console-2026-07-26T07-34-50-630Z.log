@@ -1,0 +1,11 @@
+[     122ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:17230
+[     164ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5173/@vite/client:524
+[     165ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5173/@vite/client:524
+[    4847ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/documents' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[    4847ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/documents:0
+[    5103ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/conversations' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[    5103ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/conversations:0
+[    9791ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/conversations' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[    9791ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/conversations:0
+[   10025ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/documents' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[   10026ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/documents:0

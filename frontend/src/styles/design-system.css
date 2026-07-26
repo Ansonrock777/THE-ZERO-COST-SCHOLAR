@@ -1,0 +1,362 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Classical — design-system tokens and component classes.
+
+   Ported from the Claude Design project's
+   `_ds/classical-…/styles.css`. This file is the source of truth for the
+   product's look: retune tokens here rather than hard-coding values in
+   components.
+
+   Editorial, book-like system on a soft near-white ground: Cormorant
+   Garamond headings over Lora body, justified columns, hairline rules, and
+   colour applied as *stroke* rather than fill. Cards are bordered, buttons
+   are outlined, photographs sit matted like tipped-in plates.
+
+   Fonts are loaded in index.html (preconnected) rather than @import-ed here.
+   ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201f1d;
+  --color-accent: #b68235;
+  --color-accent-2: #ac803e;
+  --color-divider: color-mix(in srgb, #201f1d 16%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --color-accent-100: #fff3e4;
+  --color-accent-200: #ffe3bf;
+  --color-accent-300: #facb8d;
+  --color-accent-400: #e1ad66;
+  --color-accent-500: #c28d41;
+  --color-accent-600: #a06f24;
+  --color-accent-700: #7d5411;
+  --color-accent-800: #5a3b0a;
+  --color-accent-900: #3a270d;
+
+  --color-accent-2-100: #fff3e4;
+  --color-accent-2-200: #ffe3be;
+  --color-accent-2-300: #f5cd96;
+  --color-accent-2-400: #dbaf70;
+  --color-accent-2-500: #bc8f4e;
+  --color-accent-2-600: #9b7232;
+  --color-accent-2-700: #79561f;
+  --color-accent-2-800: #573d14;
+  --color-accent-2-900: #382810;
+
+  /* Danger is not part of the source system; the one value the product needs
+     (form + stream errors) is tuned to sit beside the accent. */
+  --color-danger: #963f2e;
+
+  --font-heading: "Cormorant Garamond", "Iowan Old Style", Palatino Linotype, Georgia, serif;
+  --font-heading-weight: 600; /* bold retired — semibold is the interface
+     headings' ceiling; display text goes lighter still, to the normal cut */
+  --font-body: "Lora", Georgia, "Times New Roman", serif;
+
+  --space-1: 4.6px;
+  --space-2: 9.2px;
+  --space-3: 13.8px;
+  --space-4: 18.4px;
+  --space-6: 27.6px;
+  --space-8: 36.8px;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 7px;
+
+  /* Elevation — soft ink-tinted shadows on the light ground. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+
+  /* Sidebar / auth chrome. Deep warm near-black — a shade below
+     --color-neutral-900 — with gold kept as stroke and small marks. It does
+     not invert with the theme: the chrome is the colophon page. */
+  --chrome-bg: #1a1613;
+  --chrome-fg: #f3f2f2;
+  --chrome-gold: #e1ad66;
+  --chrome-gold-dim: #d0a04c;
+  --chrome-divider: rgba(243, 242, 242, 0.1);
+}
+
+/* Dark ground. The source system ships light-only, so the ramps are mirrored
+   rather than re-picked: every pairing the components rely on (a 100-step
+   tint filled behind an 800-step text, a 700-step for accent-coloured prose)
+   keeps its contrast relationship when the ground flips. */
+[data-theme='dark'] {
+  --color-bg: #16130f;
+  --color-surface: #201b16;
+  --color-text: #f1efec;
+  --color-divider: color-mix(in srgb, #f1efec 18%, transparent);
+
+  --color-neutral-100: #2d2b2b;
+  --color-neutral-200: #444141;
+  --color-neutral-300: #605d5d;
+  --color-neutral-400: #7d7979;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #bab6b6;
+  --color-neutral-700: #d7d3d3;
+  --color-neutral-800: #eae7e7;
+  --color-neutral-900: #f8f4f4;
+
+  --color-accent-100: #33230c;
+  --color-accent-200: #4a3210;
+  --color-accent-300: #6b4712;
+  --color-accent-400: #a06f24;
+  --color-accent-500: #c28d41;
+  --color-accent-600: #d5a057;
+  --color-accent-700: #e8bd7c;
+  --color-accent-800: #f6d6a5;
+  --color-accent-900: #fff3e4;
+
+  --color-accent-2-100: #33230c;
+  --color-accent-2-200: #4a3210;
+  --color-accent-2-300: #6b4712;
+  --color-accent-2-400: #9b7232;
+  --color-accent-2-500: #bc8f4e;
+  --color-accent-2-600: #cfa267;
+  --color-accent-2-700: #e2be8c;
+  --color-accent-2-800: #f2d9b1;
+  --color-accent-2-900: #fff3e4;
+
+  --color-danger: #e08a76;
+
+  /* Elevation on a dark ground is ambient darkness, not a cast shadow. */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.45);
+  --shadow-md: 0 3px 10px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.6);
+
+  --chrome-bg: #131009;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Base
+   ══════════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+
+/* The accent-to-ground pair is tuned to 3:1 — enough for chrome, not for
+   body copy — so text-sized links take a deep ramp step. */
+a { color: var(--color-accent-700); text-underline-offset: 3px; }
+a:hover { color: var(--color-accent-900); }
+
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; }
+
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* Quiet scrollbars so the panes read as calm reading surfaces. */
+* { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--color-text) 22%, transparent) transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--color-text) 20%, transparent); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* — rules — */
+.hr { height: 1px; border: 0; margin: var(--space-4) 0; background: var(--color-divider); }
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text);
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { color: var(--color-accent-700); border-color: var(--color-accent); }
+.btn-primary:hover:not(:disabled) { background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
+.btn-primary:active:not(:disabled) { background: color-mix(in srgb, var(--color-accent) 22%, transparent); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover:not(:disabled) { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active:not(:disabled) { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent-700); padding-inline: var(--space-1); }
+.btn-ghost:hover:not(:disabled) { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active:not(:disabled) { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); }
+
+/* An unstyled button that inherits the surrounding type — the base for the
+   product's many chrome affordances (nav rows, toolbar icons, list items). */
+.btn-bare {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0; color: inherit; background: transparent; border: 0;
+  border-radius: var(--radius-md); font: inherit; cursor: pointer;
+}
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: transparent;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input::placeholder { color: color-mix(in srgb, var(--color-text) 42%, transparent); }
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+select.input { cursor: pointer; }
+
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+/* Choice inputs stay real and focusable; the visible mark beside them is
+   decorative, so the control keeps its role, label and keyboard behaviour. */
+.radio input, .seg-opt input, input.checkbox {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot { width: 16px; height: 16px; flex: none; border-radius: 50%; border: 1.5px solid var(--color-divider); }
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+.seg { display: inline-flex; overflow: hidden; border: 1px solid var(--color-divider); border-radius: var(--radius-md); }
+.seg-opt {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+  color: inherit; background: transparent; border: 0; font-family: inherit;
+}
+.seg-opt svg { display: block; }
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked),
+.seg-opt[aria-pressed='true'] { color: var(--color-accent-700); box-shadow: inset 0 0 0 1px var(--color-accent); }
+.seg-opt:not(:has(input:checked)):not([aria-pressed='true']):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible),
+.seg-opt:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md);
+  background: transparent; border: 1px solid var(--color-divider);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-700); }
+.card-title { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 17px; line-height: 1.2; }
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-header { display: flex; flex-direction: column; gap: var(--space-1); }
+.card-content { display: flex; flex-direction: column; gap: var(--space-3); }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent-800); background: var(--color-accent-100); }
+
+/* — kicker — the small letterspaced label that opens a block — */
+.kicker {
+  display: block; font-size: 10.5px; font-weight: var(--font-heading-weight);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+
+/* — tabular figures — anywhere a number stands as a figure, not as prose — */
+.tnum { font-feature-settings: 'tnum' 1; }
+
+/* — progress — a hairline bar, filled with the accent — */
+.progress { width: 100%; height: 4px; overflow: hidden; border-radius: 999px; background: var(--color-divider); }
+.progress-value { height: 100%; background: var(--color-accent); transition: width 0.3s; }
+
+/* — visually hidden, still reachable by assistive tech — */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* — plates — every content photograph goes through this wrapper — */
+.plate {
+  filter: sepia(0.22) saturate(0.82) contrast(1.05); box-sizing: border-box;
+  border: 6px solid var(--color-surface); outline: 1px solid var(--color-divider);
+}
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 1px solid var(--color-divider);
+}
+.table td { padding: var(--space-2); border-bottom: 1px solid var(--color-divider); }
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; z-index: 20; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, #16130f 55%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg); border: 1px solid var(--color-divider);
+}
+.dialog-title { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 20px; }
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}

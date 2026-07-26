@@ -1,0 +1,146 @@
+- generic [ref=f4e2]:
+  - generic [ref=f4e3]:
+    - navigation "Workspace navigation" [ref=f4e4]:
+      - generic [ref=f4e5]:
+        - strong [ref=f4e9]: The Zero-Cost Scholar
+        - button "Collapse navigation" [ref=f4e10] [cursor=pointer]
+      - button "New inquiry" [ref=f4e14] [cursor=pointer]
+      - generic [ref=f4e17]:
+        - button "Library" [ref=f4e18] [cursor=pointer]
+        - button "History" [ref=f4e22] [cursor=pointer]
+      - heading "Documents (2)" [level=2] [ref=f4e179]
+      - group "Documents (2)" [ref=f4e180]:
+        - generic [ref=f4e181] [cursor=pointer]:
+          - checkbox "Anson_Barretto_Resume (3).pdf" [checked]
+          - generic "Anson_Barretto_Resume (3).pdf" [ref=f4e185]
+        - generic [ref=f4e189] [cursor=pointer]:
+          - checkbox "Anson_Barretto_Resume (3).pdf"
+          - generic "Anson_Barretto_Resume (3).pdf" [ref=f4e193]
+      - button "Manage documents" [ref=f4e31] [cursor=pointer]
+      - generic [ref=f4e32]:
+        - searchbox "Search inquiries" [ref=f4e33]
+        - generic: ⌘K
+      - generic "Inquiry history" [ref=f4e34]:
+        - paragraph [ref=f4e35]: No matching inquiries.
+    - main [ref=f4e36]:
+      - generic [ref=f4e37]:
+        - strong [ref=f4e39]: Ask across 1 document
+        - generic [ref=f4e40]:
+          - button "Settings" [ref=f4e41] [cursor=pointer]
+          - group "Colour theme" [ref=f4e46]:
+            - button "Switch to light theme" [pressed] [ref=f4e47] [cursor=pointer]:
+              - generic [ref=f4e54]: Light
+            - button "Switch to dark theme" [ref=f4e55] [cursor=pointer]:
+              - generic [ref=f4e58]: Dark
+          - button "User menu" [ref=f4e60] [cursor=pointer]:
+            - generic [ref=f4e61]: A
+            - generic [ref=f4e62]: ansonmbarreto
+      - generic [ref=f4e65]:
+        - region "Chat workspace" [ref=f4e66]:
+          - generic [ref=f4e86]:
+            - generic "Documents in scope" [ref=f4e87]:
+              - generic [ref=f4e88]:
+                - generic "Anson_Barretto_Resume (3).pdf" [ref=f4e92]
+                - button "Remove Anson_Barretto_Resume (3).pdf from this inquiry" [ref=f4e93] [cursor=pointer]
+            - generic [ref=f4e98]:
+              - generic [ref=f4e99]: New inquiry
+              - heading "What would you like to understand?" [level=1] [ref=f4e100]
+              - paragraph [ref=f4e101]: Answers combine semantic and BM25 retrieval, then link back to the original pages.
+            - generic [ref=f4e102]:
+              - textbox "Ask a question" [ref=f4e103]:
+                - /placeholder: Ask across the selected documents…
+              - generic [ref=f4e104]:
+                - generic [ref=f4e105]:
+                  - button "Attach a file" [disabled] [ref=f4e106]
+                  - button "Expand composer" [ref=f4e109] [cursor=pointer]
+                - button "Ask" [disabled] [ref=f4e115]
+        - separator "Resize chat and PDF panes" [ref=f4e82]
+        - region "PDF workspace" [ref=f4e83]:
+          - generic [ref=f4e119]:
+            - generic [ref=f4e120]:
+              - button "Back to the library" [disabled] [ref=f4e121]
+              - strong [ref=f4e124]: Anson_Barretto_Resume (3).pdf
+              - button "Document outline" [ref=f4e125] [cursor=pointer]
+              - button "More document actions" [ref=f4e127] [cursor=pointer]
+            - generic [ref=f4e132]:
+              - button "Toggle thumbnails" [ref=f4e133] [cursor=pointer]
+              - button "Find in document" [ref=f4e136] [cursor=pointer]
+              - button "Previous page" [disabled] [ref=f4e140]
+              - textbox "Page number" [ref=f4e143]: "1"
+              - generic [ref=f4e144]: / 2
+              - button "Next page" [ref=f4e145] [cursor=pointer]
+              - button "Zoom out" [ref=f4e149] [cursor=pointer]
+              - generic [ref=f4e151]: 105%
+              - button "Zoom in" [ref=f4e152] [cursor=pointer]
+              - button "Fit page" [ref=f4e154] [cursor=pointer]
+            - generic [ref=f4e197]:
+              - generic [ref=f4e199]:
+                - generic: ANSON MENINO BARRETO
+                - generic: 📧
+                - generic: ansonmbarreto@gmail.com
+                - generic: "| 📞 8080 144126 | 🔗"
+                - generic: https://in.linkedin.com/in/anson - barreto - 13b1a9276
+                - generic: "| 📍 Margao, Goa, India"
+                - generic: "TARGET TITLE : Full Stack Developer | AI & Automation Enthusiast"
+                - generic: "PROFESSIONAL SUMMARY :"
+                - generic: As a final - year Computer Engineering student, I love building practical, full - stack applications that solve actual problems , whether that means helping people break digital addictions or streamlining recruitment with AI. I focus on creating clean, scalable architectures using modern tools like Next.js, TypeScript, and Spring Boot. I actively use LLMs like Claude to accelerate my development velocity, learn new p atterns, and ensure my code aligns with current industry standards. I'm looking for a role where I can build impactful software, work with AI integrations, and continue growing as an engineer .
+                - generic: "EDUCATION:"
+                - generic: 
+                - generic: "B.Tech in Computer Engineering with AIML Honors – Don Bosco College of Engineering , Fatorda, Goa | 2022 – 2026 | CGPA: 8.30 (Till 7th Semester)"
+                - generic: 
+                - generic: "Relevant Coursework : Data Structures, Data Science & Analytics, Data Mining, Machine Learning"
+                - generic: "TECHNICAL SKILL S:"
+                - generic: 
+                - generic: "Languages: TypeScript, JavaScript, Java 21, PHP, Python, HTML5, CSS3"
+                - generic: 
+                - generic: "Frontend Frameworks: Next.js 15 (App Router), React 18, Angular 20, Tailwind CSS, shadcn/ui, Radix UI"
+                - generic: 
+                - generic: "Backend & Databases: Spring Boot 3.5.5, Supabase (PostgreSQL with RLS), MySQL, Capacitor SQLite"
+                - generic: 
+                - generic: "AI & APIs: Google Gemini 2.5 Flash , OpenAI API, NextDNS API"
+                - generic: 
+                - generic: "T ools & Infrastructure: Clerk Auth, Vercel, Docker, Git, Postman, Polar (Payments), Playwright (e2e)"
+                - generic: "PROFESSIONAL EXPERIENCE & ACADEMIC PROJECTS :"
+                - generic: Bodhami | Software Engineering Intern | Jul 2025 – Sep 2025 ( 2 months)
+                - generic: "Location: Malbhat, Madgaon, Goa"
+                - generic: 
+                - generic: Completed structured training in Business Analysis fundamentals — ADA compliance, AS - IS/TO - BE process flows, swimlane diagrams, customer needs analysis, and HLR/DLR documentation — applied ac ross hands - on case study exercises.
+                - generic: 
+                - generic: Trained in Agile delivery practices including backlog creation, estimation, release planning, user story cards with acceptance criteria, and comparative study of Waterfall, Iterative, and V - Model SDLCs.
+                - generic: 
+                - generic: "Built full - stack development foundations: Angular (components, forms, responsive UI, routing, REST API integration) and Spring Boot with Java/MySQL (REST API framework setup, debugging); introduced to AWS Cloud Infrastructure."
+                - generic: 
+                - generic: Applied the training end - to - end on the final - y ear capstone project below — owning project planning, MVP roadmap, wireframes, screen flow diagrams, and API documentation.
+                - generic: Bodhami | Final Year Project Lead
+                - generic: "Pro ject : AI Resume Screening & Shortlisting Tool"
+              - generic:
+                - link [ref=f4e201] [cursor=pointer]:
+                  - /url: mailto:ansonmbarreto@gmail.com
+                - link [ref=f4e203] [cursor=pointer]:
+                  - /url: https://in.linkedin.com/in/anson-barreto-13b1a9276
+            - generic [ref=f4e161]:
+              - button "Page thumbnails" [ref=f4e162] [cursor=pointer]
+              - button "Passage notes" [ref=f4e166] [cursor=pointer]
+              - generic [ref=f4e169]: 0 highlights
+              - textbox "Search in document" [ref=f4e174]
+              - link "Download this document" [ref=f4e204] [cursor=pointer]:
+                - /url: blob:http://localhost:5173/945faf07-f2be-46ab-b190-0ce6b4a10d35
+  - dialog [ref=f4e205]:
+    - banner [ref=f4e206]:
+      - generic [ref=f4e207]:
+        - generic [ref=f4e208]: Library
+        - heading "Manage documents" [level=2] [ref=f4e209]
+      - button "Close document manager" [ref=f4e210] [cursor=pointer]
+    - generic [ref=f4e214]:
+      - heading "Add a document" [level=2] [ref=f4e215]
+      - button "indexing-smoke-test.pdf" [ref=f4e239] [cursor=pointer]
+      - button "Choose a PDF to index" [ref=f4e223]
+      - progressbar [ref=f4e244]
+      - paragraph [ref=f4e246]: Splitting into chunks…
+    - generic [ref=f4e224]:
+      - generic [ref=f4e225] [cursor=pointer]:
+        - checkbox "Include Anson_Barretto_Resume (3).pdf" [checked]
+        - generic "Anson_Barretto_Resume (3).pdf" [ref=f4e229]
+      - generic [ref=f4e233] [cursor=pointer]:
+        - checkbox "Include Anson_Barretto_Resume (3).pdf"
+        - generic "Anson_Barretto_Resume (3).pdf" [ref=f4e237]

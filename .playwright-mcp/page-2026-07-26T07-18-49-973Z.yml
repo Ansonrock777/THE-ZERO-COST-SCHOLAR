@@ -1,0 +1,35 @@
+- generic [ref=f3e3]:
+  - complementary [ref=f3e4]:
+    - generic: "01"
+    - generic [ref=f3e5]: The Zero-Cost Scholar
+    - generic [ref=f3e10]:
+      - generic [ref=f3e11]: Evidence-grounded research
+      - heading "Read closely. Ask confidently." [level=1] [ref=f3e12]: Read closely.Ask confidently.
+      - paragraph [ref=f3e13]: Every answer stays tethered to its source — hybrid semantic and lexical retrieval, with citations that open the exact page they came from.
+    - figure [ref=f3e14]:
+      - img "An open book on a reading desk" [ref=f3e15]
+  - main [ref=f3e31]:
+    - generic [ref=f3e32]:
+      - radiogroup "Account mode" [ref=f3e33]:
+        - generic [ref=f3e34] [cursor=pointer]:
+          - radio "Sign in" [checked]
+          - generic [ref=f3e35]: Sign in
+        - generic [ref=f3e36] [cursor=pointer]:
+          - radio "Sign up"
+          - generic [ref=f3e37]: Sign up
+      - generic [ref=f3e38]:
+        - heading "Sign in" [level=1] [ref=f3e39]
+        - paragraph [ref=f3e40]: Access your private documents and past inquiries.
+      - generic [ref=f3e41]:
+        - generic [ref=f3e42]:
+          - generic [ref=f3e43]: Email
+          - textbox "Email" [ref=f3e44]:
+            - /placeholder: you@example.com
+        - generic [ref=f3e45]:
+          - generic [ref=f3e46]: Password
+          - textbox "Password" [ref=f3e47]:
+            - /placeholder: Your password
+        - button "Sign in" [ref=f3e48] [cursor=pointer]
+      - paragraph [ref=f3e51]:
+        - text: No account yet?
+        - button "Sign up" [ref=f3e52] [cursor=pointer]

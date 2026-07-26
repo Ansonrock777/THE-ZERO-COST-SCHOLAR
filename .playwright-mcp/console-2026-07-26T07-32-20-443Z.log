@@ -1,0 +1,30 @@
+[     317ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:17230
+[     420ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5173/@vite/client:524
+[     421ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5173/@vite/client:524
+[     456ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5173/favicon.ico:0
+[     469ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5173/favicon.ico:0
+[    1281ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://chcbdaidsqvtpqkaaxdq.supabase.co/auth/v1/token?grant_type=refresh_token:0
+[   17576ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/documents' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[   17577ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/documents:0
+[   17997ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/conversations' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[   17997ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/conversations:0
+[   22671ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/documents' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[   22671ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/documents:0
+[   22948ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/conversations' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[   22948ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/conversations:0
+[   52048ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/upload' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[   52048ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/upload:0
+[  114055ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom-DZQ9hRBr.js?v=13748585:17230
+[  114085ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5173/@vite/client:524
+[  114085ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5173/@vite/client:524
+[  119251ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/documents' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[  119251ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/documents:0
+[  119269ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/conversations' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[  119269ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/conversations:0
+[  123973ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/documents' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[  123974ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/documents:0
+[  124285ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8000/conversations' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:5173/dashboard:0
+[  124286ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8000/conversations:0
+[  137583ms] [ERROR] Failed to load resource: the server responded with a status of 422 (Unprocessable Entity) @ http://localhost:8000/documents:0
+[  137588ms] [ERROR] Failed to load resource: the server responded with a status of 422 (Unprocessable Entity) @ http://127.0.0.1:8000/documents:0
+[  139621ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://[::1]:8000/documents:0

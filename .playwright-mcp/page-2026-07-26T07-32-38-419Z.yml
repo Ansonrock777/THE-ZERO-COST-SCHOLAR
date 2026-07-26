@@ -1,0 +1,48 @@
+- generic [ref=e55]:
+  - navigation "Workspace navigation" [ref=e56]:
+    - generic [ref=e57]:
+      - strong [ref=e61]: The Zero-Cost Scholar
+      - button "Collapse navigation" [ref=e62] [cursor=pointer]
+    - button "New inquiry" [ref=e66] [cursor=pointer]
+    - generic [ref=e69]:
+      - button "Library" [ref=e70] [cursor=pointer]
+      - button "History" [ref=e74] [cursor=pointer]
+    - heading "Documents (0)" [level=2] [ref=e79]
+    - group "Documents (0)" [ref=e80]:
+      - paragraph [ref=e81]: No documents yet.
+    - button "Manage documents" [ref=e83] [cursor=pointer]
+    - generic [ref=e84]:
+      - searchbox "Search inquiries" [ref=e85]
+      - generic: ⌘K
+    - generic "Inquiry history" [ref=e86]:
+      - paragraph [ref=e87]: No matching inquiries.
+  - main [ref=e88]:
+    - generic [ref=e89]:
+      - strong [ref=e91]: Ask across 0 documents
+      - generic [ref=e92]:
+        - button "Settings" [ref=e93] [cursor=pointer]
+        - group "Colour theme" [ref=e98]:
+          - button "Switch to light theme" [pressed] [ref=e99] [cursor=pointer]:
+            - generic [ref=e106]: Light
+          - button "Switch to dark theme" [ref=e107] [cursor=pointer]:
+            - generic [ref=e110]: Dark
+        - button "User menu" [ref=e112] [cursor=pointer]:
+          - generic [ref=e113]: A
+          - generic [ref=e114]: ansonmbarreto
+    - generic [ref=e117]:
+      - region "Chat workspace" [ref=e118]:
+        - generic [ref=e120]:
+          - generic [ref=e121]: Evidence-grounded research
+          - heading "Read closely. Ask confidently." [level=1] [ref=e122]
+          - paragraph [ref=e123]: Upload a PDF to begin. Every answer stays connected to its evidence.
+          - generic [ref=e124]:
+            - heading "Add a document" [level=2] [ref=e125]
+            - button "Click to choose a PDF PDF files only" [ref=e126] [cursor=pointer]:
+              - generic [ref=e131]: Click to choose a PDF
+              - generic [ref=e132]: PDF files only
+            - button "Choose a PDF to index" [ref=e133]
+      - separator "Resize chat and PDF panes" [ref=e134]
+      - region "PDF workspace" [ref=e135]:
+        - generic [ref=e136]:
+          - heading "Select a source" [level=2] [ref=e137]
+          - paragraph [ref=e138]: The original PDF and citation evidence will appear here.

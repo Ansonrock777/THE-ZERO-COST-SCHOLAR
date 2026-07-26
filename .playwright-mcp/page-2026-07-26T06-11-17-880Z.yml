@@ -1,0 +1,13 @@
+- generic [ref=f2e4]:
+  - generic [ref=f2e5]:
+    - heading "The Zero-Cost Scholar" [level=3] [ref=f2e6]
+    - paragraph [ref=f2e7]: Sign in to access your private documents
+  - generic [ref=f2e8]:
+    - generic [ref=f2e9]:
+      - textbox "Email" [ref=f2e10]
+      - textbox "Password" [ref=f2e11]
+      - button "Sign In" [ref=f2e12] [cursor=pointer]
+    - paragraph [ref=f2e13]:
+      - text: No account?
+      - link "Sign up" [ref=f2e14] [cursor=pointer]:
+        - /url: /signup

@@ -1,0 +1,61 @@
+- generic [ref=e16]:
+  - complementary [ref=e18]:
+    - heading "The Zero-Cost Scholar" [level=1] [ref=e20]
+    - button "New inquiry" [ref=e22] [cursor=pointer]
+    - navigation [ref=e24]:
+      - generic [ref=e25]: Library
+      - generic [ref=e28]: History
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - paragraph [ref=e35]: Documents (0)
+        - button "Upload a document" [ref=e36] [cursor=pointer]
+      - paragraph [ref=e147]: No uploaded documents yet.
+      - textbox "Search inquiries" [ref=e43]
+      - paragraph [ref=e45]: No queries yet.
+  - generic [ref=e46]:
+    - banner [ref=e47]:
+      - generic [ref=e48]:
+        - button "Open sidebar" [ref=e49] [cursor=pointer]
+        - heading "Ask a question" [level=1] [ref=e52]
+      - generic [ref=e54]:
+        - button "Settings" [ref=e55] [cursor=pointer]
+        - generic [ref=e59]:
+          - button "Light" [ref=e60] [cursor=pointer]
+          - button "Dark" [ref=e67] [cursor=pointer]
+        - button "User menu" [ref=e71] [cursor=pointer]:
+          - generic [ref=e72]: U
+    - generic [ref=e148]:
+      - button "Close upload panel" [ref=e149] [cursor=pointer]
+      - generic [ref=e153]:
+        - heading "Upload a PDF" [level=2] [ref=e154]
+        - generic [ref=e155] [cursor=pointer]: verify.pdf
+        - button "Index Document" [ref=e156] [cursor=pointer]
+    - generic [ref=e75]: Upload a PDF first to start asking questions.
+  - generic [ref=e78]:
+    - generic [ref=e79]:
+      - generic [ref=e80]:
+        - button "Close PDF viewer" [ref=e81] [cursor=pointer]
+        - generic [ref=e84]: No document selected
+      - generic [ref=e85]:
+        - button "Document outline" [disabled] [ref=e86]
+        - button "More options" [disabled] [ref=e90]
+    - generic [ref=e95]:
+      - generic [ref=e96]:
+        - button "Previous page" [disabled] [ref=e97]
+        - generic [ref=e100]: –
+        - button "Next page" [disabled] [ref=e101]
+      - generic [ref=e104]:
+        - button "Zoom out" [ref=e105] [cursor=pointer]
+        - generic [ref=e109]: 100%
+        - button "Zoom in" [ref=e110] [cursor=pointer]
+        - button "Toggle fullscreen" [ref=e114] [cursor=pointer]
+        - button "Reload PDF" [ref=e120] [cursor=pointer]
+    - paragraph [ref=e127]: Select a document to preview its PDF.
+    - generic [ref=e128]:
+      - generic [ref=e129]:
+        - button "Pages" [disabled] [ref=e130]
+        - button "Comments" [disabled] [ref=e134]
+        - button "Tags" [disabled] [ref=e137]
+      - textbox "Coming soon" [disabled] [ref=e142]:
+        - /placeholder: Search in document
+      - button "Download PDF" [disabled] [ref=e143]
